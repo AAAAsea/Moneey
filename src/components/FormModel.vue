@@ -82,20 +82,20 @@
 </template>
 
 <script setup>
-import { add } from "@/api/list.js";
-import { computed, reactive, ref } from "vue";
-import { useStore } from "vuex";
+import { add } from '@/api/list.js';
+import { computed, reactive, ref } from 'vue';
+import { useStore } from 'vuex';
 const store = useStore();
 const props = defineProps({
   initData: Function,
 });
 const ruleFormRef = ref();
 const ruleForm = reactive({
-  date: "",
+  date: '',
   cost: 0,
-  type: "",
-  content: "",
-  name: "",
+  type: '',
+  content: '',
+  name: '',
 });
 const judgeDateDisabled = (date) => date > new Date();
 
@@ -104,49 +104,49 @@ const rules = {
     {
       min: 1,
       max: 8,
-      message: "最多8个字符",
-      trigger: "blur",
+      message: '最多8个字符',
+      trigger: 'blur',
     },
   ],
   cost: [
     {
       required: true,
-      message: "请选择花费",
-      trigger: "change",
+      message: '请选择花费',
+      trigger: 'change',
     },
   ],
   type: [
     {
       required: true,
-      message: "请选择类型",
-      trigger: "change",
+      message: '请选择类型',
+      trigger: 'change',
     },
   ],
   date: [
     {
-      type: "date",
+      type: 'date',
       required: true,
-      message: "请选择日期",
-      trigger: "change",
+      message: '请选择日期',
+      trigger: 'change',
     },
   ],
   content: [
     {
       required: true,
-      message: "请输入内容",
-      trigger: "change",
+      message: '请输入内容',
+      trigger: 'change',
     },
     {
       min: 1,
-      max: 20,
-      message: "最多20个字符",
-      trigger: "change",
+      max: 30,
+      message: '最多30个字符',
+      trigger: 'change',
     },
   ],
 };
 
 const options = computed(() =>
-  [...new Set(["饮食", "日用", "交通", "娱乐", ...store.state.data.types])].map(
+  [...new Set(['饮食', '日用', '交通', '娱乐', ...store.state.data.types])].map(
     (e) => {
       return { label: e, value: e };
     }
@@ -172,17 +172,17 @@ const submitForm = async (formEl) => {
     if (valid) {
       add(ruleForm).then((e) => {
         formEl.resetFields();
-        store.commit("showToast", {
-          message: "提交成功",
-          type: "success",
+        store.commit('showToast', {
+          message: '提交成功',
+          type: 'success',
         });
         props.initData();
         store.state.model.formModelFlag = false;
       });
     } else {
-      store.commit("showToast", {
-        message: "请输入正确的格式",
-        type: "error",
+      store.commit('showToast', {
+        message: '请输入正确的格式',
+        type: 'error',
       });
     }
   });
@@ -194,5 +194,4 @@ const resetForm = (formEl) => {
 };
 </script>
 
-<style>
-</style>
+<style></style>
