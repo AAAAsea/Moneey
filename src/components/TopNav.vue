@@ -9,7 +9,11 @@
       >
         登录
       </span>
-      <el-popconfirm title="退出登录？" @confirm="emit('logout')" v-else>
+      <el-popconfirm
+        title="退出登录？"
+        @confirm="emit('logout')"
+        v-else
+      >
         <template #reference>
           <span class="header baseline">
             {{ store.state.user.nickName }}
@@ -19,7 +23,10 @@
     </div>
     <div class="right">
       <!-- 主题 -->
-      <span class="icon" @click="changeTheme">
+      <span
+        class="icon"
+        @click="changeTheme"
+      >
         <el-icon>
           <Sunrise v-if="store.state.settings.theme !== 'light'" />
           <MoonNight v-else />
@@ -27,8 +34,13 @@
       </span>
 
       <!-- 更新记录 -->
-      <span class="history icon" @click="openHisory">
-        <el-icon><Clock /></el-icon>
+      <span
+        class="history icon"
+        @click="openHisory"
+      >
+        <el-icon>
+          <Clock />
+        </el-icon>
       </span>
       <!-- 设置 -->
       <span
@@ -38,7 +50,9 @@
             !store.state.model.settingsModelFlag
         "
       >
-        <el-icon><Setting /></el-icon>
+        <el-icon>
+          <Setting />
+        </el-icon>
       </span>
     </div>
   </div>

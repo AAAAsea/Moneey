@@ -42,7 +42,7 @@ export default defineConfig({
     proxy: {          // 代理
       '/list': {
         // target: 'http://192.168.0.143:4100',
-        target: 'http://124.221.154.52:4100',
+        target: 'http://124.222.44.34:4100',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/list/, '')
       },

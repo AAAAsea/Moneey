@@ -15,7 +15,10 @@
       ref="ruleFormRef"
       @keydown.enter="submitForm(ruleFormRef)"
     >
-      <el-form-item label="日期" required>
+      <el-form-item
+        label="日期"
+        required
+      >
         <el-col :span="11">
           <el-form-item prop="date">
             <el-date-picker
@@ -26,16 +29,23 @@
               style="width: 100%"
               value-format="YYYY-MM-DD"
               :disabled-date="judgeDateDisabled"
+              :default-value="new Date()"
             />
           </el-form-item>
         </el-col>
       </el-form-item>
 
-      <el-form-item label="金额" prop="cost">
+      <el-form-item
+        label="金额"
+        prop="cost"
+      >
         <el-input-number v-model="ruleForm.cost" />
       </el-form-item>
 
-      <el-form-item label="分类" prop="type">
+      <el-form-item
+        label="分类"
+        prop="type"
+      >
         <el-select
           v-model="ruleForm.type"
           filterable
@@ -53,7 +63,10 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="用途" prop="content">
+      <el-form-item
+        label="用途"
+        prop="content"
+      >
         <el-input
           v-model="ruleForm.content"
           type="textarea"
@@ -61,7 +74,10 @@
         />
       </el-form-item>
 
-      <el-form-item label="标签" prop="name">
+      <el-form-item
+        label="标签"
+        prop="name"
+      >
         <el-autocomplete
           v-model="ruleForm.name"
           placeholder="其它标签"
@@ -72,9 +88,11 @@
       </el-form-item>
 
       <el-form-item :style="{ marginTop: '20px' }">
-        <el-button type="primary" @click="submitForm(ruleFormRef)"
-          >提交</el-button
-        >
+        <el-button
+          type="primary"
+          @click="submitForm(ruleFormRef)"
+          :disabled="isSubmitDisabled"
+        >提交</el-button>
         <el-button @click="resetForm(ruleFormRef)">重置</el-button>
       </el-form-item>
     </el-form>
@@ -83,19 +101,22 @@
 
 <script setup>
 import { add } from "@/api/list.js";
+import { format } from "echarts";
 import { computed, reactive, ref } from "vue";
 import { useStore } from "vuex";
+import { formatDate } from "@/utils/tools.js";
 const store = useStore();
 const props = defineProps({
   initData: Function,
 });
 const ruleFormRef = ref();
+const isSubmitDisabled = ref(false);
 const ruleForm = reactive({
-  date: "",
+  date: formatDate(new Date()),
   cost: 0,
-  type: "",
+  type: store.state.data.defaultType,
   content: "",
-  name: "",
+  name: store.state.data.defaultTag,
 });
 const judgeDateDisabled = (date) => date > new Date();
 
@@ -152,6 +173,7 @@ const options = computed(() =>
     }
   )
 );
+
 const tags = computed(() =>
   store.state.data.tags.map((e) => {
     return { value: e };
@@ -170,14 +192,24 @@ const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
+      isSubmitDisabled.value = true;
       add(ruleForm).then((e) => {
-        formEl.resetFields();
         store.commit("showToast", {
           message: "提交成功",
           type: "success",
         });
         props.initData();
         store.state.model.formModelFlag = false;
+        isSubmitDisabled.value = false;
+        store.commit("updateData", {
+          key: "defaultType",
+          value: ruleForm.type,
+        });
+        store.commit("updateData", { key: "defaultTag", value: ruleForm.name });
+
+        // formEl.resetFields();
+        ruleForm.cost = 0;
+        ruleForm.content = "";
       });
     } else {
       store.commit("showToast", {

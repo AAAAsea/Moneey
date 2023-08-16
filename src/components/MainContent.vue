@@ -2,24 +2,31 @@
   <div class="main">
     <div class="left no-scroll">
       <div class="global-total">
-        <span
-          ><count-up
+        <span>
+          <count-up
             :end-val="total"
             decimalPlaces="2"
             duration="1.5"
             prefix="￥"
             :options="{ separator: ',', prefix: '￥' }"
           >
-          </count-up
-        ></span>
+          </count-up>
+        </span>
       </div>
       <Transition name="el-fade-in">
-        <h3 class="intro" v-show="data.length === 0">
+        <h3
+          class="intro"
+          v-show="data.length === 0"
+        >
           {{ tip }}
         </h3>
       </Transition>
       <TransitionGroup name="fade">
-        <div class="year" v-for="year in data" :key="year.year">
+        <div
+          class="year"
+          v-for="year in data"
+          :key="year.year"
+        >
           <div
             class="year-title"
             @click="
@@ -41,13 +48,12 @@
                 </count-up>
               </span>
             </div>
-            <el-icon
-              :style="{
+            <el-icon :style="{
                 transform: year.hidden ? 'rotate(90deg)' : '',
                 transition: '.3s',
-              }"
-              ><ArrowDownBold
-            /></el-icon>
+              }">
+              <ArrowDownBold />
+            </el-icon>
           </div>
           <el-collapse-transition>
             <div v-show="!year.hidden">
@@ -67,25 +73,22 @@
                   >
                     <div class="title-content">
                       <h4>{{ month.month }}月</h4>
-                      <span class="total"
-                        ><count-up
+                      <span class="total"><count-up
                           :end-val="month.total"
                           decimalPlaces="2"
                           duration="1.5"
                           prefix="￥"
                           :options="{ separator: ',', prefix: '￥' }"
                         >
-                        </count-up
-                      ></span>
+                        </count-up></span>
                     </div>
-                    <el-icon
-                      :style="{
+                    <el-icon :style="{
                         transform:
                           (month.hidden ? 'rotate(90deg)' : '') + ' scale(0.8)',
                         transition: '.3s',
-                      }"
-                      ><ArrowDownBold
-                    /></el-icon>
+                      }">
+                      <ArrowDownBold />
+                    </el-icon>
                   </div>
                   <el-collapse-transition>
                     <div v-show="!month.hidden">
@@ -107,8 +110,7 @@
                                 prefix="￥"
                                 :options="{ separator: ',', prefix: '￥' }"
                               >
-                              </count-up
-                            ></span>
+                              </count-up></span>
                           </div>
                           <ul>
                             <TransitionGroup name="fade">
@@ -178,13 +180,28 @@
       </TransitionGroup>
     </div>
     <div class="right">
-      <div class="calendar-container no-scroll" ref="calendarContainerRef">
-        <div id="calendar-chart" ref="calendarChartRef"></div>
+      <div
+        class="calendar-container no-scroll"
+        ref="calendarContainerRef"
+      >
+        <div
+          id="calendar-chart"
+          ref="calendarChartRef"
+        ></div>
       </div>
-      <div id="line-chart" ref="lineChartRef"></div>
+      <div
+        id="line-chart"
+        ref="lineChartRef"
+      ></div>
       <div id="pie-chart">
-        <div id="pie-chart-type" ref="pieChartLeftRef"></div>
-        <div id="pie-chart-tag" ref="pieChartRightRef"></div>
+        <div
+          id="pie-chart-type"
+          ref="pieChartLeftRef"
+        ></div>
+        <div
+          id="pie-chart-tag"
+          ref="pieChartRightRef"
+        ></div>
       </div>
     </div>
   </div>

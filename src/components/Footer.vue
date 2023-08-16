@@ -6,7 +6,7 @@
 .footer {
   text-align: center;
   user-select: none;
-  margin: 0 0 20px 0;
+  padding: 0 0 20px 0;
 }
 a {
   text-decoration: none;

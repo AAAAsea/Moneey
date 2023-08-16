@@ -4,7 +4,10 @@
     title="更新记录"
     :width="store.state.model.modelWidth"
   >
-    <div id="tree" style="height: 60vh; overflow: auto">
+    <div
+      id="tree"
+      style="height: 60vh; overflow: auto"
+    >
       <el-timeline>
         <el-timeline-item
           v-for="(activity, index) in activities"
@@ -29,6 +32,12 @@ import { useStore } from "vuex";
 const store = useStore();
 
 const activities = [
+  {
+    content: "添加时，标签和类型默认为上一次的内容，时间默认是今天",
+    timestamp: "2023-8-16",
+    size: "large",
+    type: "primary",
+  },
   {
     content: "增加总金额，添加滚动数字动画，增加快捷键Alt+Q，以及回车监听",
     timestamp: "2023-1-8",
