@@ -159,8 +159,8 @@ const rules = {
     },
     {
       min: 1,
-      max: 20,
-      message: "最多20个字符",
+      max: 30,
+      message: "最多30个字符",
       trigger: "change",
     },
   ],
@@ -226,5 +226,4 @@ const resetForm = (formEl) => {
 };
 </script>
 
-<style>
-</style>
+<style></style>

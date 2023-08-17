@@ -100,7 +100,7 @@
                         >
                           <div class="day-title">
                             <span class="day-title-left">{{
-                              month.month + "-" + day.day
+                              month.month + '-' + day.day
                             }}</span>
                             <span class="day-title-right">
                               <count-up
@@ -218,23 +218,22 @@
 </template>
 
 <script setup>
-import { getList, deleteList } from "@/api/list.js";
-import { computed, nextTick, reactive, ref, watch } from "vue";
-import * as echarts from "echarts";
-import { useStore } from "vuex";
-import darkTheme from "@/themes/dark.json";
-import vintageTheme from "@/themes/vintage.json";
-import { getColorByWord } from "@/utils/tools.js";
-import { Plus, ArrowDownBold } from "@element-plus/icons-vue";
-import CountUp from "vue-countup-v3";
+import { getList, deleteList } from '@/api/list.js';
+import { computed, nextTick, reactive, ref, watch } from 'vue';
+import * as echarts from 'echarts';
+import { useStore } from 'vuex';
+import darkTheme from '@/themes/dark.json';
+import vintageTheme from '@/themes/vintage.json';
+import { getColorByWord } from '@/utils/tools.js';
+import { Plus, ArrowDownBold } from '@element-plus/icons-vue';
+import CountUp from 'vue-countup-v3';
 
 const store = useStore();
 
-echarts.registerTheme("dark2", darkTheme);
-echarts.registerTheme("vintage", vintageTheme);
+echarts.registerTheme('dark2', darkTheme);
+echarts.registerTheme('vintage', vintageTheme);
 
 const data = reactive([]);
-const tip = ref("🐢数据拉取中...");
 const lineChartRef = ref();
 const pieChartLeftRef = ref();
 const pieChartRightRef = ref();
@@ -256,7 +255,7 @@ const tagTotal = ref(0);
 
 const dark = computed(() => store.state.settings.theme);
 watch(dark, (old, newValue) => {
-  initEchart(old === "light" ? "vintage" : "dark2");
+  initEchart(old === 'light' ? 'vintage' : 'dark2');
 });
 
 const isLoggedIn = computed(() => store.state.user.isLogin);
@@ -268,6 +267,8 @@ watch(isLoggedIn, (newValue, oldValue) => {
     initData();
   }
 });
+
+const tip = ref(isLoggedIn.value ? '🐢数据拉取中...' : '请先登录');
 
 const handleClick = () => {
   store.state.model.formModelFlag = true;
@@ -285,19 +286,19 @@ const resetData = () => {
   for (let key in dayCostData) {
     delete dayCostData[key];
   }
-  tip.value = "🐢数据拉取中...";
+  tip.value = '🐢数据拉取中...';
 };
 const initData = () => {
   if (!isLoggedIn.value) {
-    store.commit("showToast", {
-      type: "warning",
-      message: "请先登录",
+    store.commit('showToast', {
+      type: 'warning',
+      message: '请先登录',
     });
     return;
   }
   getList()
     .then((res) => {
-      tip.value = "点击右下角的加号添加记录吧😋";
+      tip.value = '点击右下角的加号添加记录吧😋';
       resetData();
 
       data.push(...res.data);
@@ -308,15 +309,15 @@ const initData = () => {
         year.children.forEach((month) => {
           month.children.forEach((day) => {
             const date = echarts.time.parse(
-              year.year + "-" + month.month + "-" + day.day
+              year.year + '-' + month.month + '-' + day.day
             );
             days.push(date);
-            dayCostData[echarts.time.format(date, "{yyyy}-{MM}-{dd}", false)] =
+            dayCostData[echarts.time.format(date, '{yyyy}-{MM}-{dd}', false)] =
               day.total;
             day.children.forEach((item) => {
               types.add(item.type);
               tags.add(item.name);
-              if (item.name.trim() !== "") tagTotal.value += item.cost;
+              tagTotal.value += item.cost;
 
               const current = pieEchartLeftData.find(
                 (e) => e.name === item.type
@@ -331,11 +332,12 @@ const initData = () => {
               }
 
               const current2 = pieEchartRightData.find(
-                (e) => e.name === item.name
+                (e) =>
+                  e.name === (item.name.trim() !== '' ? item.name : '无标签')
               );
               if (!current2) {
                 pieEchartRightData.push({
-                  name: item.name,
+                  name: item.name.trim() !== '' ? item.name : '无标签',
                   value: item.cost,
                 });
               } else {
@@ -347,18 +349,18 @@ const initData = () => {
       });
       formatLineEchartData();
       // globalTotal.update(total.value);
-      store.commit("updateData", {
-        key: "types",
+      store.commit('updateData', {
+        key: 'types',
         value: [...types],
       });
 
-      store.commit("updateData", {
-        key: "tags",
+      store.commit('updateData', {
+        key: 'tags',
         value: [...tags],
       });
     })
     .catch(() => {
-      tip.value = "😭拉取失败...";
+      tip.value = '😭拉取失败...';
     })
     .finally(() => {
       nextTick(initEchart);
@@ -368,14 +370,14 @@ const initData = () => {
 const deleteItem = (id) => {
   deleteList(id).then((res) => {
     if (res.code === 20000) {
-      store.commit("showToast", {
-        type: "success",
-        message: "删除成功",
+      store.commit('showToast', {
+        type: 'success',
+        message: '删除成功',
       });
       initData();
     } else {
-      store.commit("showToast", {
-        type: "error",
+      store.commit('showToast', {
+        type: 'error',
         message: res.msg,
       });
     }
@@ -384,12 +386,12 @@ const deleteItem = (id) => {
 
 const formatCalendarEchartData = () => {
   const leatestYear = data[0]?.year ?? new Date().getFullYear();
-  const date = +echarts.time.parse(leatestYear + "-01-01");
-  const end = +echarts.time.parse(+leatestYear + 1 + "-01-01");
+  const date = +echarts.time.parse(leatestYear + '-01-01');
+  const end = +echarts.time.parse(+leatestYear + 1 + '-01-01');
   const dayTime = 3600 * 24 * 1000;
   const tempData = [];
   for (let time = date; time < end; time += dayTime) {
-    const timeString = echarts.time.format(time, "{yyyy}-{MM}-{dd}", false);
+    const timeString = echarts.time.format(time, '{yyyy}-{MM}-{dd}', false);
     const cost = dayCostData[timeString] ?? 0;
     tempData.push([timeString, cost]);
   }
@@ -402,7 +404,7 @@ const formatLineEchartData = () => {
   const end = +new Date();
 
   while (firstDay < end) {
-    const timeString = echarts.time.format(firstDay, "{yyyy}-{MM}-{dd}", false);
+    const timeString = echarts.time.format(firstDay, '{yyyy}-{MM}-{dd}', false);
     lineEchartData.x.push(timeString);
     lineEchartData.y.push(dayCostData[timeString] ?? 0);
     firstDay = firstDay + dayTime;
@@ -412,58 +414,58 @@ const formatLineEchartData = () => {
 initData();
 
 const initEchart = (theme) => {
-  if (!theme) theme = dark.value === "light" ? "vintage" : "dark2";
+  if (!theme) theme = dark.value === 'light' ? 'vintage' : 'dark2';
   // 销毁
   echartsInstances.forEach((e) => e.dispose());
 
   // 初始化
   const lineEchart = echarts.init(lineChartRef.value, theme);
   lineEchart.setOption({
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     title: {
-      text: "近期花销统计",
-      left: "center",
+      text: '近期花销统计',
+      left: 'center',
     },
     tooltip: {
-      trigger: "axis",
-      valueFormatter: (val) => "￥" + (Math.round(val * 100) / 100 ?? ""),
+      trigger: 'axis',
+      valueFormatter: (val) => '￥' + (Math.round(val * 100) / 100 ?? ''),
     },
     dataZoom: [
       {
         startValue: lineEchartData.x[lineEchartData.x.length - 7],
       },
       {
-        type: "inside",
+        type: 'inside',
       },
     ],
     xAxis: {
-      type: "category",
+      type: 'category',
       data: lineEchartData.x,
     },
     yAxis: {
-      type: "value",
+      type: 'value',
     },
     series: [
       {
         data: lineEchartData.y,
-        type: "line",
+        type: 'line',
         smooth: true,
         symbolSize: 10,
-        symbol: "rect",
+        symbol: 'rect',
         label: {
           show: true,
           formatter: (params) =>
-            "￥" + (Math.round(params.value * 100) / 100 ?? ""),
+            '￥' + (Math.round(params.value * 100) / 100 ?? ''),
           // fontStyle: "oblique",
           // borderColor: "#fff",
           // borderWidth: "0px",
           // borderType: "dashed",
           // shadowColor: "transparent",
           // shadowBlur: "0px",
-          textBorderColor: "transparent",
+          textBorderColor: 'transparent',
         },
         areaStyle: {
-          color: dark.value === "light" ? "#d87c7c" : "#dd6b66",
+          color: dark.value === 'light' ? '#d87c7c' : '#dd6b66',
         },
       },
     ],
@@ -472,20 +474,20 @@ const initEchart = (theme) => {
 
   const calendarEchart = echarts.init(
     calendarChartRef.value,
-    theme === "vintage" ? "vintage" : "dark"
+    theme === 'vintage' ? 'vintage' : 'dark'
   );
   calendarEchart.setOption({
     tooltip: {
       formatter: (params) =>
-        params.value[0] + "  ￥" + Math.round(params.value[1] * 100) / 100,
+        params.value[0] + '  ￥' + Math.round(params.value[1] * 100) / 100,
     },
-    backgroundColor: "transparent",
-    gradientColor: ["#6d6868", "#dd6b66"],
+    backgroundColor: 'transparent',
+    gradientColor: ['#6d6868', '#dd6b66'],
     visualMap: {
       min: 1,
       max: Math.max(Math.min(data[0] ? data[0].max : 20, 500), 5),
       show: false,
-      type: "piecewise",
+      type: 'piecewise',
       minOpen: true,
       maxOpen: true,
       splitNumber: 3,
@@ -493,19 +495,19 @@ const initEchart = (theme) => {
     calendar: [
       {
         range: new Date().getFullYear(),
-        cellSize: ["auto", 20],
+        cellSize: ['auto', 20],
       },
     ],
     series: [
       {
-        type: "heatmap",
-        coordinateSystem: "calendar",
+        type: 'heatmap',
+        coordinateSystem: 'calendar',
         calendarIndex: 0,
         data: formatCalendarEchartData(),
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
-            shadowColor: "rgba(0, 0, 0, 0.5)",
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
           },
         },
       },
@@ -514,45 +516,45 @@ const initEchart = (theme) => {
 
   const pieEchartLeft = echarts.init(pieChartLeftRef.value, theme);
   pieEchartLeft.setOption({
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     title: {
-      text: "分类统计",
-      left: "center",
+      text: '分类统计',
+      left: 'center',
     },
     tooltip: {
-      trigger: "item",
+      trigger: 'item',
       valueFormatter: (val) =>
         Math.round(val * 100) / 100 +
-        " | " +
+        ' | ' +
         Math.round((val / total.value) * 100 * 100) / 100 +
-        "%",
+        '%',
     },
 
     legend: {
-      top: "5%",
-      left: "right",
-      orient: "vertical",
+      top: '5%',
+      left: 'right',
+      orient: 'vertical',
     },
     series: [
       {
-        name: "分类统计",
-        type: "pie",
-        radius: ["40%", "70%"],
+        name: '分类统计',
+        type: 'pie',
+        radius: ['40%', '70%'],
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 10,
-          borderColor: "#fff",
+          borderColor: '#fff',
           borderWidth: 2,
         },
         label: {
           show: false,
-          position: "center",
+          position: 'center',
         },
         emphasis: {
           label: {
             show: true,
             fontSize: 40,
-            fontWeight: "bold",
+            fontWeight: 'bold',
           },
         },
         labelLine: {
@@ -566,44 +568,44 @@ const initEchart = (theme) => {
 
   const pieEchartRight = echarts.init(pieChartRightRef.value, theme);
   pieEchartRight.setOption({
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     title: {
-      text: "标签统计",
-      left: "center",
+      text: '标签统计',
+      left: 'center',
     },
     tooltip: {
-      trigger: "item",
+      trigger: 'item',
       valueFormatter: (val) =>
         Math.round(val * 100) / 100 +
-        " | " +
+        ' | ' +
         Math.round((val / tagTotal.value) * 100 * 100) / 100 +
-        "%",
+        '%',
     },
     legend: {
-      top: "5%",
-      left: "right",
-      orient: "vertical",
+      top: '5%',
+      left: 'right',
+      orient: 'vertical',
     },
     series: [
       {
-        name: "标签统计",
-        type: "pie",
-        radius: ["40%", "70%"],
+        name: '标签统计',
+        type: 'pie',
+        radius: ['40%', '70%'],
         avoidLabelOverlap: false,
         itemStyle: {
           borderRadius: 10,
-          borderColor: "#fff",
+          borderColor: '#fff',
           borderWidth: 2,
         },
         label: {
           show: false,
-          position: "center",
+          position: 'center',
         },
         emphasis: {
           label: {
             show: true,
             fontSize: 40,
-            fontWeight: "bold",
+            fontWeight: 'bold',
           },
         },
         labelLine: {
@@ -638,9 +640,10 @@ const adjustEcharts = () => {
     }
   };
 };
-window.addEventListener("resize", adjustEcharts());
-window.addEventListener("keydown", (e) => {
-  if (e.altKey && e.key === "q") {
+window.addEventListener('resize', adjustEcharts());
+window.addEventListener('keydown', (e) => {
+  // 适配一下mac
+  if (e.altKey && (e.key === 'q' || e.key === 'œ')) {
     handleClick();
   }
 });
