@@ -1,5 +1,5 @@
 import store from '@/store'
-import zhCN from './lang/zh-CN.js';
+import zhCN from './lang/zh-CN.ts';
 import { createI18n } from "vue-i18n";
 
 const i18n = createI18n({

@@ -11,6 +11,7 @@ export default {
     historyModelFlag: false,
     settingsModelFlag: false,
     formModelFlag: false,
+    calculateMoneyModelFlag: false,
     modelWidth: "40%",
   },
   user: {

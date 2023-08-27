@@ -217,7 +217,7 @@
   />
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { getList, deleteList } from '@/api/list.js';
 import { computed, nextTick, reactive, ref, watch } from 'vue';
 import * as echarts from 'echarts';

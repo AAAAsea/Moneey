@@ -160,7 +160,7 @@
   </el-dialog>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { reactive, ref } from "vue";
 import { useStore } from "vuex";
 

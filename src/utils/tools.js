@@ -51,3 +51,53 @@ export function formatDate(dateInput, format = 'yyyy-MM-DD') {
 
   return formattedDate;
 }
+
+// 用于计算实现AA制的最小步骤
+export const settlePayments = (payments) => {
+  let total = 0;
+  for(let name in payments){
+      if(payments.hasOwnProperty(name))
+        total += payments[name];
+  }
+  const avg = total / Object.keys(payments).length;
+
+  const debts = {};
+  for(let name in payments){
+      if(payments.hasOwnProperty(name))
+        debts[name] = payments[name] - avg;
+  }
+
+  const transactions = [];
+
+  while(true){
+      let maxDebt = -Infinity, maxDebtName = null;
+      let minDebt = Infinity, minDebtName = null;
+
+      for(let name in debts){
+          if(debts.hasOwnProperty(name)) {
+              if(debts[name] > maxDebt){
+                  maxDebt = debts[name];
+                  maxDebtName = name;
+              }
+
+              if(debts[name] < minDebt){
+                  minDebt = debts[name];
+                  minDebtName = name;
+              }
+          }
+      }
+
+      if(maxDebt <= 0){
+          break;
+      }
+
+      const amount = Math.min(maxDebt, -minDebt);
+
+      debts[maxDebtName] -= amount;
+      debts[minDebtName] += amount;
+
+      transactions.push({from: minDebtName, to: maxDebtName, amount: amount});
+  }
+
+  return transactions;
+}

@@ -22,6 +22,16 @@
       </el-popconfirm>
     </div>
     <div class="right">
+
+      <!-- 结账 -->
+      <span
+        class="icon"
+        @click="calculateMoney"
+      >
+        <el-icon>
+          <Money/>
+        </el-icon>
+      </span>
       <!-- 主题 -->
       <span
         class="icon"
@@ -58,18 +68,19 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
   Clock,
   Setting,
-  Sunny,
   Sunrise,
   MoonNight,
+Money,
 } from "@element-plus/icons-vue";
 import { useStore } from "vuex";
 
 const emit = defineEmits(["logout"]);
 const store = useStore();
+
 
 const changeTheme = () => {
   const newTheme = store.state.settings.theme === "light" ? "dark" : "light";
@@ -90,6 +101,10 @@ function openLoginModel() {
 
 function openHisory() {
   store.commit("updateModel", { key: "historyModelFlag", value: true });
+}
+
+function calculateMoney(){
+  store.commit("updateModel", { key: "calculateMoneyModelFlag", value: true });
 }
 </script>
 

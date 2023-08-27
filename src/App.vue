@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import TopNav from "@/components/TopNav.vue";
 import LoginModel from "@/components/LoginModel.vue";
 import ProjectHistory from "@/components/ProjectHistory.vue";
@@ -6,6 +6,7 @@ import MainContent from "@/components/MainContent.vue";
 import Footer from "@/components/Footer.vue";
 import { useStore } from "vuex";
 import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+import CalculateMoney from "./components/CalculateMoney.vue";
 const store = useStore();
 function adjustModelWidth() {
   if (window.innerWidth > 800) {
@@ -45,7 +46,9 @@ const logIn = () => {
     <top-nav @logout="logOut" />
     <login-model @login="logIn" />
     <project-history />
-    <main-content />
+    <router-view />
+    <!-- <main-content /> -->
+    <CalculateMoney/>
     <Footer />
   </el-config-provider>
 </template>
