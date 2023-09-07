@@ -15,10 +15,7 @@
       ref="ruleFormRef"
       @keydown.enter="submitForm(ruleFormRef)"
     >
-      <el-form-item
-        label="日期"
-        required
-      >
+      <el-form-item label="日期" required>
         <el-col :span="11">
           <el-form-item prop="date">
             <el-date-picker
@@ -35,17 +32,11 @@
         </el-col>
       </el-form-item>
 
-      <el-form-item
-        label="金额"
-        prop="cost"
-      >
+      <el-form-item label="金额" prop="cost">
         <el-input-number v-model="ruleForm.cost" />
       </el-form-item>
 
-      <el-form-item
-        label="分类"
-        prop="type"
-      >
+      <el-form-item label="分类" prop="type">
         <el-select
           v-model="ruleForm.type"
           filterable
@@ -63,10 +54,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item
-        label="用途"
-        prop="content"
-      >
+      <el-form-item label="用途" prop="content">
         <el-input
           v-model="ruleForm.content"
           type="textarea"
@@ -74,10 +62,7 @@
         />
       </el-form-item>
 
-      <el-form-item
-        label="标签"
-        prop="name"
-      >
+      <el-form-item label="标签" prop="name">
         <el-autocomplete
           v-model="ruleForm.name"
           placeholder="其它标签"
@@ -92,19 +77,19 @@
           type="primary"
           @click="submitForm(ruleFormRef)"
           :disabled="isSubmitDisabled"
-        >提交</el-button>
+          >提交</el-button
+        >
         <el-button @click="resetForm(ruleFormRef)">重置</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
 </template>
 
-<script setup>
-import { add } from "@/api/list.js";
-import { format } from "echarts";
-import { computed, reactive, ref } from "vue";
-import { useStore } from "vuex";
-import { formatDate } from "@/utils/tools.js";
+<script lang="ts" setup>
+import { add } from '@/api/list.js';
+import { format } from 'echarts';
+import { computed, reactive, ref } from 'vue';
+import { formatDate } from '@/utils/tools.js';
 const store = useStore();
 const props = defineProps({
   initData: Function,
@@ -115,7 +100,7 @@ const ruleForm = reactive({
   date: formatDate(new Date()),
   cost: 0,
   type: store.state.data.defaultType,
-  content: "",
+  content: '',
   name: store.state.data.defaultTag,
 });
 const judgeDateDisabled = (date) => date > new Date();
@@ -125,49 +110,49 @@ const rules = {
     {
       min: 1,
       max: 8,
-      message: "最多8个字符",
-      trigger: "blur",
+      message: '最多8个字符',
+      trigger: 'blur',
     },
   ],
   cost: [
     {
       required: true,
-      message: "请选择花费",
-      trigger: "change",
+      message: '请选择花费',
+      trigger: 'change',
     },
   ],
   type: [
     {
       required: true,
-      message: "请选择类型",
-      trigger: "change",
+      message: '请选择类型',
+      trigger: 'change',
     },
   ],
   date: [
     {
-      type: "date",
+      type: 'date',
       required: true,
-      message: "请选择日期",
-      trigger: "change",
+      message: '请选择日期',
+      trigger: 'change',
     },
   ],
   content: [
     {
       required: true,
-      message: "请输入内容",
-      trigger: "change",
+      message: '请输入内容',
+      trigger: 'change',
     },
     {
       min: 1,
       max: 30,
-      message: "最多30个字符",
-      trigger: "change",
+      message: '最多30个字符',
+      trigger: 'change',
     },
   ],
 };
 
 const options = computed(() =>
-  [...new Set(["饮食", "日用", "交通", "娱乐", ...store.state.data.types])].map(
+  [...new Set(['饮食', '日用', '交通', '娱乐', ...store.state.data.types])].map(
     (e) => {
       return { label: e, value: e };
     }
@@ -194,27 +179,27 @@ const submitForm = async (formEl) => {
     if (valid) {
       isSubmitDisabled.value = true;
       add(ruleForm).then((e) => {
-        store.commit("showToast", {
-          message: "提交成功",
-          type: "success",
+        store.commit('showToast', {
+          message: '提交成功',
+          type: 'success',
         });
         props.initData();
         store.state.model.formModelFlag = false;
         isSubmitDisabled.value = false;
-        store.commit("updateData", {
-          key: "defaultType",
+        store.commit('updateData', {
+          key: 'defaultType',
           value: ruleForm.type,
         });
-        store.commit("updateData", { key: "defaultTag", value: ruleForm.name });
+        store.commit('updateData', { key: 'defaultTag', value: ruleForm.name });
 
         // formEl.resetFields();
         ruleForm.cost = 0;
-        ruleForm.content = "";
+        ruleForm.content = '';
       });
     } else {
-      store.commit("showToast", {
-        message: "请输入正确的格式",
-        type: "error",
+      store.commit('showToast', {
+        message: '请输入正确的格式',
+        type: 'error',
       });
     }
   });

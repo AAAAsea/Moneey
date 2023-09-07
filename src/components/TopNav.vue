@@ -2,64 +2,36 @@
   <div class="topnav">
     <div class="left">
       <!-- 账户 -->
-      <span
-        class="header baseline"
-        @click="openLoginModel"
-        v-if="!store.state.user.isLogin"
-      >
-        登录
-      </span>
-      <el-popconfirm
-        title="退出登录？"
-        @confirm="emit('logout')"
-        v-else
-      >
+      <el-popconfirm title="退出登录？" @confirm="logout">
         <template #reference>
           <span class="header baseline">
-            {{ store.state.user.nickName }}
+            {{ user.nickname }}
           </span>
         </template>
       </el-popconfirm>
     </div>
     <div class="right">
-
       <!-- 结账 -->
-      <span
-        class="icon"
-        @click="calculateMoney"
-      >
+      <span class="icon">
         <el-icon>
-          <Money/>
+          <Money />
         </el-icon>
       </span>
       <!-- 主题 -->
-      <span
-        class="icon"
-        @click="changeTheme"
-      >
+      <span class="icon" @click="changeTheme">
         <el-icon>
-          <Sunrise v-if="store.state.settings.theme !== 'light'" />
+          <Sunrise v-if="settings.theme !== 'light'" />
           <MoonNight v-else />
         </el-icon>
       </span>
-
       <!-- 更新记录 -->
-      <span
-        class="history icon"
-        @click="openHisory"
-      >
+      <span class="history icon">
         <el-icon>
           <Clock />
         </el-icon>
       </span>
       <!-- 设置 -->
-      <span
-        class="settings icon"
-        @click="
-          store.state.model.settingsModelFlag =
-            !store.state.model.settingsModelFlag
-        "
-      >
+      <span class="settings icon">
         <el-icon>
           <Setting />
         </el-icon>
@@ -69,49 +41,36 @@
 </template>
 
 <script setup lang="ts">
+import { router } from '@/router/Index';
+import { useSettingsStore } from '@/store/settings';
+import { useUserStore } from '@/store/user';
 import {
   Clock,
   Setting,
   Sunrise,
   MoonNight,
-Money,
-} from "@element-plus/icons-vue";
-import { useStore } from "vuex";
+  Money,
+} from '@element-plus/icons-vue';
 
-const emit = defineEmits(["logout"]);
-const store = useStore();
-
+const settings = useSettingsStore();
+const user = useUserStore();
 
 const changeTheme = () => {
-  const newTheme = store.state.settings.theme === "light" ? "dark" : "light";
+  const newTheme = settings.theme === 'light' ? 'dark' : 'light';
   document.documentElement.className = newTheme;
-  store.commit("updateSettings", {
-    key: "theme",
-    value: (store.state.settings.theme = newTheme),
-  });
+  settings.theme = newTheme;
 };
-document.documentElement.className = store.state.settings.theme;
+document.documentElement.className = settings.theme;
 
-// 登录登出
-function openLoginModel() {
-  if (!store.state.user.isLogin) {
-    store.state.model.loginModelFlag = !store.state.model.loginModelFlag;
-  }
-}
-
-function openHisory() {
-  store.commit("updateModel", { key: "historyModelFlag", value: true });
-}
-
-function calculateMoney(){
-  store.commit("updateModel", { key: "calculateMoneyModelFlag", value: true });
-}
+const logout = () => {
+  user.$reset();
+  router.push('/login');
+};
 </script>
 
 <style scoped lang="scss">
 .topnav {
   width: 100%;
-  // position: fixed;
   top: 0;
   z-index: 20;
   background: radial-gradient(transparent 1px, var(--bg-transparant-color) 1px);
@@ -154,7 +113,7 @@ function calculateMoney(){
   }
 }
 .baseline::after {
-  content: "";
+  content: '';
   display: block;
   height: 2px;
   width: 0%;

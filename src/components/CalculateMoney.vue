@@ -1,29 +1,15 @@
 <template>
-  <el-dialog
-    v-model="store.state.model.calculateMoneyModelFlag
-"
-    title="账单计算"
-    :width="store.state.model.modelWidth"
-  >
+  <div>
     <span>This is a message</span>
-    <template #footer>
+    <div>
       <span class="dialog-footer">
-        <el-button @click="store.state.model.calculateMoneyModelFlag
- = false">Cancel</el-button>
-        <el-button type="primary" @click="store.state.model.calculateMoneyModelFlag
- = false">
-          Confirm
-        </el-button>
+        <el-button>Cancel</el-button>
+        <el-button type="primary"> Confirm </el-button>
       </span>
-    </template>
-  </el-dialog>
+    </div>
+  </div>
 </template>
 
-<script setup lang="ts">
-import { useStore } from 'vuex';
-
-const store = useStore();
-
-</script>
+<script setup lang="ts"></script>
 
 <style scoped lang="less"></style>

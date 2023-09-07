@@ -14,19 +14,12 @@
         </span>
       </div>
       <Transition name="el-fade-in">
-        <h3
-          class="intro"
-          v-show="data.length === 0"
-        >
+        <h3 class="intro" v-show="data.length === 0">
           {{ tip }}
         </h3>
       </Transition>
       <TransitionGroup name="fade">
-        <div
-          class="year"
-          v-for="year in data"
-          :key="year.year"
-        >
+        <div class="year" v-for="year in data" :key="year.year">
           <div
             class="year-title"
             @click="
@@ -48,10 +41,12 @@
                 </count-up>
               </span>
             </div>
-            <el-icon :style="{
+            <el-icon
+              :style="{
                 transform: year.hidden ? 'rotate(90deg)' : '',
                 transition: '.3s',
-              }">
+              }"
+            >
               <ArrowDownBold />
             </el-icon>
           </div>
@@ -73,20 +68,24 @@
                   >
                     <div class="title-content">
                       <h4>{{ month.month }}月</h4>
-                      <span class="total"><count-up
+                      <span class="total"
+                        ><count-up
                           :end-val="month.total"
                           decimalPlaces="2"
                           duration="1.5"
                           prefix="￥"
                           :options="{ separator: ',', prefix: '￥' }"
                         >
-                        </count-up></span>
+                        </count-up
+                      ></span>
                     </div>
-                    <el-icon :style="{
+                    <el-icon
+                      :style="{
                         transform:
                           (month.hidden ? 'rotate(90deg)' : '') + ' scale(0.8)',
                         transition: '.3s',
-                      }">
+                      }"
+                    >
                       <ArrowDownBold />
                     </el-icon>
                   </div>
@@ -110,7 +109,8 @@
                                 prefix="￥"
                                 :options="{ separator: ',', prefix: '￥' }"
                               >
-                              </count-up></span>
+                              </count-up
+                            ></span>
                           </div>
                           <ul>
                             <TransitionGroup name="fade">
@@ -180,28 +180,13 @@
       </TransitionGroup>
     </div>
     <div class="right">
-      <div
-        class="calendar-container no-scroll"
-        ref="calendarContainerRef"
-      >
-        <div
-          id="calendar-chart"
-          ref="calendarChartRef"
-        ></div>
+      <div class="calendar-container no-scroll" ref="calendarContainerRef">
+        <div id="calendar-chart" ref="calendarChartRef"></div>
       </div>
-      <div
-        id="line-chart"
-        ref="lineChartRef"
-      ></div>
+      <div id="line-chart" ref="lineChartRef"></div>
       <div id="pie-chart">
-        <div
-          id="pie-chart-type"
-          ref="pieChartLeftRef"
-        ></div>
-        <div
-          id="pie-chart-tag"
-          ref="pieChartRightRef"
-        ></div>
+        <div id="pie-chart-type" ref="pieChartLeftRef"></div>
+        <div id="pie-chart-tag" ref="pieChartRightRef"></div>
       </div>
     </div>
   </div>
@@ -221,17 +206,21 @@
 import { getList, deleteList } from '@/api/list.js';
 import { computed, nextTick, reactive, ref, watch } from 'vue';
 import * as echarts from 'echarts';
-import { useStore } from 'vuex';
 import darkTheme from '@/themes/dark.json';
 import vintageTheme from '@/themes/vintage.json';
 import { getColorByWord } from '@/utils/tools.js';
 import { Plus, ArrowDownBold } from '@element-plus/icons-vue';
 import CountUp from 'vue-countup-v3';
-
-const store = useStore();
+import { useSettingsStore } from '@/store/settings';
+import { useUserStore } from '@/store/user';
+import { useModelStore } from '@/store/model';
 
 echarts.registerTheme('dark2', darkTheme);
 echarts.registerTheme('vintage', vintageTheme);
+
+const settings = useSettingsStore();
+const user = useUserStore();
+const model = useModelStore();
 
 const data = reactive([]);
 const lineChartRef = ref();
@@ -253,12 +242,12 @@ const echartsInstances = reactive([]);
 const total = ref(0);
 const tagTotal = ref(0);
 
-const dark = computed(() => store.state.settings.theme);
+const dark = computed(() => settings.theme);
 watch(dark, (old, newValue) => {
   initEchart(old === 'light' ? 'vintage' : 'dark2');
 });
 
-const isLoggedIn = computed(() => store.state.user.isLogin);
+const isLoggedIn = computed(() => user.isLogin);
 watch(isLoggedIn, (newValue, oldValue) => {
   if (!newValue) {
     resetData();
@@ -271,7 +260,7 @@ watch(isLoggedIn, (newValue, oldValue) => {
 const tip = ref(isLoggedIn.value ? '🐢数据拉取中...' : '请先登录');
 
 const handleClick = () => {
-  store.state.model.formModelFlag = true;
+  model.form = true;
 };
 const resetData = () => {
   // console.log("resetData");
@@ -290,10 +279,6 @@ const resetData = () => {
 };
 const initData = () => {
   if (!isLoggedIn.value) {
-    store.commit('showToast', {
-      type: 'warning',
-      message: '请先登录',
-    });
     return;
   }
   getList()

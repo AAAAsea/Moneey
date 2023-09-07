@@ -1,15 +1,6 @@
-import { createStore } from 'vuex'
-import state from './state';
-import actions from './actions';
-import mutations from './mutations';
-import saveToLocalStorage from './plugins/saveToLocalStorage';
+import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 
-// 插件
-const plugins = [saveToLocalStorage]
-
-export default createStore({
-  state,
-  mutations,
-  actions,
-  plugins
-});
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+export default pinia;

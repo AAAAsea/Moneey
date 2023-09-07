@@ -61,14 +61,14 @@
         />
       </el-form-item>
       <el-form-item
-        :label="$t('login.nickName')"
+        :label="$t('login.nickname')"
         label-width="auto"
-        prop="nickName"
+        prop="nickname"
       >
         <el-input
-          v-model="registRuleForm.nickName"
+          v-model="registRuleForm.nickname"
           autocomplete="off"
-          :placeholder="$t('login.nickNamePlace')"
+          :placeholder="$t('login.nicknamePlace')"
         />
       </el-form-item>
       <!-- <el-form-item :label="$t('login.code')" label-width="auto" prop="code"  >
@@ -133,7 +133,7 @@
           type="text"
           @click="type = type === 'login' ? 'regist' : 'login'"
           style="cursor: pointer"
-          >{{ type === "login" ? "前往注册" : "已有帐号，点击登录" }}</el-button
+          >{{ type === 'login' ? '前往注册' : '已有帐号，点击登录' }}</el-button
         >
         <!-- <el-button type="text" v-if="type === 'login'" @click="type='recoverPassword'" style="color:var(--primary-color);cursor:pointer;">{{'忘记密码？'}}</el-button> -->
         <el-button @click="store.state.model.loginModelFlag = false"
@@ -152,7 +152,7 @@
           "
           style="backgroundcolor: var(--primary-color); border: none"
           >{{
-            type === "login" ? "登录" : type === "regist" ? "注册" : "提交"
+            type === 'login' ? '登录' : type === 'regist' ? '注册' : '提交'
           }}</el-button
         >
       </span>
@@ -161,43 +161,43 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
-import { useStore } from "vuex";
+import { reactive, ref } from 'vue';
+import { useStore } from 'vuex';
 
-const emit = defineEmits(["login"]);
-const type = ref("login");
+const emit = defineEmits(['login']);
+const type = ref('login');
 const store = useStore();
 const canSubmit = ref(true);
 
 // 登录
-const ruleFormRef = ref("");
+const ruleFormRef = ref('');
 const ruleForm = reactive({
-  account: "",
-  password: "",
+  account: '',
+  password: '',
 });
 const loginRules = reactive({
   account: [
-    { required: true, message: "邮箱不能为空", trigger: "blur" },
-    { validator: validateMail, trigger: "blur" },
+    { required: true, message: '邮箱不能为空', trigger: 'blur' },
+    { validator: validateMail, trigger: 'blur' },
   ],
   password: [
-    { required: true, message: "密码不可为空", trigger: "blur" },
-    { min: 6, message: "最少6个字符", trigger: "blur" },
-    { max: 15, message: "最多15个字符", trigger: "blur" },
+    { required: true, message: '密码不可为空', trigger: 'blur' },
+    { min: 6, message: '最少6个字符', trigger: 'blur' },
+    { max: 15, message: '最多15个字符', trigger: 'blur' },
   ],
 });
 
 // 注册
-const registerRuleFormRef = ref("");
+const registerRuleFormRef = ref('');
 const sendCodeButtonFlag = ref(false);
 const codeWaitTime = ref(0);
 // 邮箱表单校验规则
 const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
 function validateMail(rule, value, callback) {
-  if (value === "") {
-    callback(new Error("邮箱不能为空"));
+  if (value === '') {
+    callback(new Error('邮箱不能为空'));
   } else if (!reg.test(value)) {
-    callback(new Error("邮箱格式不正确"));
+    callback(new Error('邮箱格式不正确'));
   } else {
     // if (ruleForm.mail !== '') {
     //   if (!registerRuleFormRef.value) return
@@ -207,108 +207,109 @@ function validateMail(rule, value, callback) {
   }
 }
 function validatePassword2(rule, value, callback) {
-  if (type.value === "regist" && value !== registRuleForm.password) {
-    callback(new Error("两次密码不一致"));
+  if (type.value === 'regist' && value !== registRuleForm.password) {
+    callback(new Error('两次密码不一致'));
   } else if (
-    type.value === "recoverPassword" &&
+    type.value === 'recoverPassword' &&
     value !== recoverRuleForm.password
   ) {
-    callback(new Error("两次密码不一致"));
+    callback(new Error('两次密码不一致'));
   } else {
     callback();
   }
 }
 const registRuleForm = reactive({
-  username: "",
-  code: "",
-  password: "",
-  nickName: "",
-  password2: "",
+  username: '',
+  code: '',
+  password: '',
+  nickname: '',
+  password2: '',
 });
 
 const registRules = reactive({
   username: [
-    { required: true, message: "邮箱不能为空", trigger: "blur" },
-    { validator: validateMail, trigger: "blur" },
+    { required: true, message: '邮箱不能为空', trigger: 'blur' },
+    { validator: validateMail, trigger: 'blur' },
   ],
   code: [
-    { required: true, message: "验证码不能为空", trigger: "blur" },
-    { min: 6, max: 6, message: "六位数", trigger: "blur" },
+    { required: true, message: '验证码不能为空', trigger: 'blur' },
+    { min: 6, max: 6, message: '六位数', trigger: 'blur' },
   ],
   password: [
-    { required: true, message: "密码不可为空", trigger: "blur" },
-    { min: 6, message: "最少6个字符", trigger: "blur" },
-    { max: 15, message: "最多15个字符", trigger: "blur" },
+    { required: true, message: '密码不可为空', trigger: 'blur' },
+    { min: 6, message: '最少6个字符', trigger: 'blur' },
+    { max: 15, message: '最多15个字符', trigger: 'blur' },
   ],
-  nickName: [
-    { required: true, message: "昵称不能为空", trigger: "blur" },
-    { min: 2, message: "最少2个字符", trigger: "blur" },
-    { max: 10, message: "最多10个字符", trigger: "blur" },
+  nickname: [
+    { required: true, message: '昵称不能为空', trigger: 'blur' },
+    { min: 2, message: '最少2个字符', trigger: 'blur' },
+    { max: 10, message: '最多10个字符', trigger: 'blur' },
   ],
   password2: [
-    { required: true, message: "请再次输入密码", trigger: "blur" },
-    { validator: validatePassword2, trigger: "blur" },
+    { required: true, message: '请再次输入密码', trigger: 'blur' },
+    { validator: validatePassword2, trigger: 'blur' },
   ],
 });
 
 // 找回密码
-const recoverRuleFormRef = ref("");
+const recoverRuleFormRef = ref('');
 const sendRecoverCodeButtonFlag = ref(false);
 const codeRecoverWaitTime = ref(0);
 
 const recoverRuleForm = reactive({
-  username: "",
-  code: "",
-  password: "",
-  password2: "",
+  username: '',
+  code: '',
+  password: '',
+  password2: '',
 });
 
 const recoverRules = reactive({
   username: [
-    { required: true, message: "邮箱不能为空", trigger: "blur" },
-    { validator: validateMail, trigger: "blur" },
+    { required: true, message: '邮箱不能为空', trigger: 'blur' },
+    { validator: validateMail, trigger: 'blur' },
   ],
   code: [
-    { required: true, message: "验证码不能为空", trigger: "blur" },
-    { min: 6, max: 6, message: "六位数", trigger: "blur" },
+    { required: true, message: '验证码不能为空', trigger: 'blur' },
+    { min: 6, max: 6, message: '六位数', trigger: 'blur' },
   ],
   password: [
-    { required: true, message: "密码不可为空", trigger: "blur" },
-    { min: 6, message: "最少6个字符", trigger: "blur" },
-    { max: 15, message: "最多15个字符", trigger: "blur" },
+    { required: true, message: '密码不可为空', trigger: 'blur' },
+    { min: 6, message: '最少6个字符', trigger: 'blur' },
+    { max: 15, message: '最多15个字符', trigger: 'blur' },
   ],
   password2: [
-    { required: true, message: "请再次输入密码", trigger: "blur" },
-    { validator: validatePassword2, trigger: "blur" },
+    { required: true, message: '请再次输入密码', trigger: 'blur' },
+    { validator: validatePassword2, trigger: 'blur' },
   ],
 });
 
 // 提交
-import { login, signup } from "@/api/auth";
+import { login, register } from '@/api/auth';
+import { rmSync } from 'fs';
 // 处理验证码
 function handleCodeClick() {
   const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
   if (
     !reg.test(
-      type.value === "regist"
+      type.value === 'regist'
         ? registRuleForm.username
         : recoverRuleForm.username
     )
   ) {
-    store.commit("showToast", {
-      type: "warning",
-      message: "邮箱格式不正确",
+    store.commit('showToast', {
+      type: 'warning',
+      message: '邮箱格式不正确',
     });
     return;
   }
-  if (type.value === "regist" && registRuleForm.nickName === "") {
-    store.commit("showToast", {
-      type: "warning",
-      message: "昵称不可为空",
+  if (type.value === 'regist' && registRuleForm.nickname === '') {
+    store.commit('showToast', {
+      type: 'warning',
+      message: '昵称不可为空',
     });
     return;
   }
-  if (type.value === "regist") {
+  if (type.value === 'regist') {
     sendCodeButtonFlag.value = true;
     codeWaitTime.value = 60;
     const codeWaitTimeInterval = setInterval(() => {
@@ -318,7 +319,7 @@ function handleCodeClick() {
       sendCodeButtonFlag.value = false;
       clearInterval(codeWaitTimeInterval);
     }, 60000);
-    getMailCode(registRuleForm.username, registRuleForm.nickName).then(
+    getMailCode(registRuleForm.username, registRuleForm.nickname).then(
       (res) => {
         // console.log(res)
         handleRes(
@@ -355,11 +356,11 @@ function handleCodeClick() {
 }
 // 回车提交
 function handleFormClick(e) {
-  if (store.state.model.loginModelFlag && e.key === "Enter") {
+  if (store.state.model.loginModelFlag && e.key === 'Enter') {
     submit(
-      type.value === "login"
+      type.value === 'login'
         ? ruleFormRef.value
-        : type.value === "regist"
+        : type.value === 'regist'
         ? registerRuleFormRef.value
         : recoverRuleFormRef.value
     );
@@ -367,20 +368,11 @@ function handleFormClick(e) {
 }
 // 通用处理返回结果
 function handleRes(res, successCallback = () => {}, errorCallback = () => {}) {
-  if (res?.code === 20000) {
-    store.commit("showToast", {
-      type: "success",
-      title: res.message,
-    });
-    successCallback();
-  } else {
-    // console.log(res)
-    store.commit("showToast", {
-      type: "error",
-      title: res?.message ?? "发生错误",
-    });
-    errorCallback();
-  }
+  console.log(res);
+
+  successCallback();
+
+  errorCallback();
 }
 // 提交
 function submit(formEl) {
@@ -390,44 +382,47 @@ function submit(formEl) {
   formEl.validate((valid) => {
     if (valid) {
       // 提交注册
-      if (type.value === "regist") {
-        signup(registRuleForm)
+      if (type.value === 'regist') {
+        register(registRuleForm)
           .then((res) => {
             // console.log(res)
             canSubmit.value = true;
             handleRes(res, () => {
-              type.value = "login";
+              type.value = 'login';
             });
           })
           .catch(() => {
-            store.commit("showToast", {
-              type: "error",
-              message: "系统异常",
+            store.commit('showToast', {
+              type: 'error',
+              message: '系统异常',
             });
             canSubmit.value = true;
           });
       }
       // 提交登录
-      else if (type.value === "login") {
+      else if (type.value === 'login') {
         login(ruleForm.account, ruleForm.password)
           .then((res) => {
             canSubmit.value = true;
             handleRes(res, () => {
-              store.commit("updateUser", { key: "isLogin", value: true });
-              store.commit("updateUser", {
-                key: "token",
+              store.commit('updateUser', { key: 'isLogin', value: true });
+              store.commit('updateUser', {
+                key: 'token',
                 value: res.data.token,
               });
-              store.commit("updateUser", {
-                key: "nickName",
-                value: res.data.nickName,
+              store.commit('updateUser', {
+                key: 'nickname',
+                value: res.data.nickname,
               });
-              emit("login");
-              store.state.model.loginModelFlag = false;
+              emit('login');
             });
           })
-          .catch(() => {
+          .catch((res) => {
             canSubmit.value = true;
+            store.commit('showToast', {
+              type: 'error',
+              message: res.message,
+            });
           });
       } else {
         // 找回密码
@@ -436,13 +431,13 @@ function submit(formEl) {
           .then((res) => {
             canSubmit.value = true;
             handleRes(res, () => {
-              type.value = "login";
+              type.value = 'login';
             });
           })
           .catch(() => {
-            store.commit("showToast", {
-              type: "error",
-              message: "系统异常",
+            store.commit('showToast', {
+              type: 'error',
+              message: '系统异常',
             });
             canSubmit.value = true;
           });
@@ -456,20 +451,25 @@ function submit(formEl) {
 .el-button--text {
   margin-right: 15px;
 }
+
 .el-select {
   width: 300px;
 }
+
 .el-input {
   width: 300px;
 }
+
 .dialog-footer button:first-child {
   margin-right: 10px;
 }
+
 .rule-form {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .code {
   width: 300px;
   display: flex;

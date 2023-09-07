@@ -1,11 +1,12 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import path from 'path';
 
-// https://vitejs.dev/config/
+const env = loadEnv('development', process.cwd()); // 获取.env文件里定义的环境变量
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -45,11 +46,12 @@ export default defineConfig({
     open: true, // 服务启动后自动打开浏览器
     proxy: {
       // 代理
-      '/list': {
+      '/api': {
         // target: 'http://192.168.0.143:4100',
-        target: 'http://124.222.44.34:4100',
+        // target: 'http://124.222.44.34:4100',
+        target: env.VITE_HOST,
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/list/, ''),
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },
