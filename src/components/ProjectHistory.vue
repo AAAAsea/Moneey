@@ -1,8 +1,8 @@
 <template>
   <el-dialog
-    v-model="model.projectHistory"
+    v-modal="modal.projectHistory"
     title="更新记录"
-    :width="model.width"
+    :width="modal.width"
   >
     <div id="tree" style="height: 60vh; overflow: auto">
       <el-timeline>
@@ -24,9 +24,9 @@
 </template>
 
 <script lang="ts" setup>
-import { useModelStore } from '@/store/model';
+import { useModalStore } from '@/store/modal';
 
-const model = useModelStore();
+const modal = useModalStore();
 const activities = [
   {
     content: '添加时，标签和类型默认为上一次的内容，时间默认是今天',
@@ -84,3 +84,4 @@ const activities = [
   background: rgba(174, 174, 174, 0.1);
 }
 </style>
+@/store/modal

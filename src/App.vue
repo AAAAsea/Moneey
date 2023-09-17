@@ -4,13 +4,14 @@ import ProjectHistory from '@/components/ProjectHistory.vue';
 import Footer from '@/components/Footer.vue';
 // import { useStore } from 'vuex';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
-import { useModelStore } from './store/model';
-const model = useModelStore();
+import { useModalStore } from './store/modal';
+
+const modalStore = useModalStore();
 function adjustModelWidth() {
   if (window.innerWidth > 800) {
-    model.width = '40%';
+    modalStore.width = '40%';
   } else {
-    model.width = '95vw';
+    modalStore.width = '95vw';
   }
 }
 adjustModelWidth();
@@ -42,7 +43,7 @@ window.addEventListener('resize', adjustModelWidth);
 <template>
   <el-config-provider :locale="zhCn">
     <TopNav />
-    <ProjectHistory />
+    <!-- <ProjectHistory /> -->
     <RouterView />
     <Footer class="footer" />
   </el-config-provider>
@@ -55,3 +56,4 @@ window.addEventListener('resize', adjustModelWidth);
   bottom: 10px;
 }
 </style>
+./store/modal

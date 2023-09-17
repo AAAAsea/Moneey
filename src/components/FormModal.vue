@@ -1,9 +1,10 @@
 <template>
   <el-dialog
-    v-model="store.state.model.formModelFlag"
+    v-model="dialogVisible"
     title="记账"
     class="dialog"
-    :width="store.state.model.modelWidth"
+    :width="modalStore.width"
+    @close="onClose"
   >
     <el-form
       :model="ruleForm"
@@ -13,7 +14,6 @@
       status-icon
       title="添加记录"
       ref="ruleFormRef"
-      @keydown.enter="submitForm(ruleFormRef)"
     >
       <el-form-item label="日期" required>
         <el-col :span="11">
@@ -36,9 +36,9 @@
         <el-input-number v-model="ruleForm.cost" />
       </el-form-item>
 
-      <el-form-item label="分类" prop="type">
+      <el-form-item label="分类" prop="categoryName">
         <el-select
-          v-model="ruleForm.type"
+          v-model="ruleForm.categoryName"
           filterable
           allow-create
           default-first-option
@@ -62,14 +62,36 @@
         />
       </el-form-item>
 
-      <el-form-item label="标签" prop="name">
-        <el-autocomplete
-          v-model="ruleForm.name"
-          placeholder="其它标签"
-          clearable
-          :fetch-suggestions="getTags"
-          highlight-first-item
-        />
+      <el-form-item label="标签" prop="tags">
+        <div class="tags-container">
+          <el-tag
+            v-for="tag in ruleForm.tags"
+            :key="tag"
+            class="mx-1"
+            closable
+            :disable-transitions="false"
+            @close="handleClose(tag)"
+          >
+            {{ tag }}
+          </el-tag>
+          <el-input
+            v-if="tagInputVisible"
+            ref="tagInputRef"
+            v-model="tagInputValue"
+            class="ml-1 w-20"
+            size="small"
+            @keyup.enter="handleInputConfirm"
+            @blur="handleInputConfirm"
+          />
+          <el-button
+            v-else
+            class="button-new-tag ml-1"
+            size="small"
+            @click="showInput"
+          >
+            + 添加
+          </el-button>
+        </div>
       </el-form-item>
 
       <el-form-item :style="{ marginTop: '20px' }">
@@ -86,34 +108,35 @@
 </template>
 
 <script lang="ts" setup>
-import { add } from '@/api/list.js';
-import { format } from 'echarts';
-import { computed, reactive, ref } from 'vue';
-import { formatDate } from '@/utils/tools.js';
-const store = useStore();
+import { addRecord } from '@/api/list';
+import { computed, reactive, ref, watchEffect, nextTick } from 'vue';
+import { formatDate } from '@/utils/tools.ts';
+import { useDataStore } from '@/store/data';
+import { useModalStore } from '@/store/modal';
+import { ElMessage, FormInstance, ElInput } from 'element-plus';
+
 const props = defineProps({
   initData: Function,
+  visible: Boolean,
 });
+const emit = defineEmits(['close', 'submited']);
+
+const dataStore = useDataStore();
+const modalStore = useModalStore();
 const ruleFormRef = ref();
 const isSubmitDisabled = ref(false);
+const dialogVisible = ref(false);
+
 const ruleForm = reactive({
   date: formatDate(new Date()),
   cost: 0,
-  type: store.state.data.defaultType,
+  categoryName: dataStore.defaultCategory,
   content: '',
-  name: store.state.data.defaultTag,
+  tags: [] as string[],
 });
-const judgeDateDisabled = (date) => date > new Date();
+const judgeDateDisabled = (date: Date) => date > new Date();
 
 const rules = {
-  name: [
-    {
-      min: 1,
-      max: 8,
-      message: '最多8个字符',
-      trigger: 'blur',
-    },
-  ],
   cost: [
     {
       required: true,
@@ -121,7 +144,7 @@ const rules = {
       trigger: 'change',
     },
   ],
-  type: [
+  categoryName: [
     {
       required: true,
       message: '请选择类型',
@@ -152,52 +175,61 @@ const rules = {
 };
 
 const options = computed(() =>
-  [...new Set(['饮食', '日用', '交通', '娱乐', ...store.state.data.types])].map(
+  [...new Set(['饮食', '日用', '交通', '娱乐', ...dataStore.categories])].map(
     (e) => {
       return { label: e, value: e };
     }
   )
 );
 
-const tags = computed(() =>
-  store.state.data.tags.map((e) => {
-    return { value: e };
-  })
-);
-const getTags = (queryString, callback) => {
-  const results = queryString
-    ? tags.value.filter((tag) =>
-        tag.value.toLowerCase().includes(queryString.toLowerCase())
-      )
-    : tags.value;
-  callback(results);
+const tagInputVisible = ref(false);
+const tagInputValue = ref('');
+const tagInputRef = ref();
+
+const handleClose = (tag: string) => {
+  ruleForm.tags.splice(ruleForm.tags.indexOf(tag), 1);
 };
 
-const submitForm = async (formEl) => {
+const showInput = () => {
+  tagInputVisible.value = true;
+  nextTick(() => {
+    tagInputRef.value!.input!.focus();
+  });
+};
+
+const handleInputConfirm = () => {
+  if (tagInputValue.value) {
+    ruleForm.tags.push(tagInputValue.value);
+  }
+  tagInputVisible.value = false;
+  tagInputValue.value = '';
+};
+
+const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  await formEl.validate((valid, fields) => {
+  console.log('提交');
+
+  await formEl.validate((valid: boolean) => {
     if (valid) {
       isSubmitDisabled.value = true;
-      add(ruleForm).then((e) => {
-        store.commit('showToast', {
+      addRecord(ruleForm).then(() => {
+        ElMessage({
           message: '提交成功',
           type: 'success',
         });
-        props.initData();
-        store.state.model.formModelFlag = false;
-        isSubmitDisabled.value = false;
-        store.commit('updateData', {
-          key: 'defaultType',
-          value: ruleForm.type,
-        });
-        store.commit('updateData', { key: 'defaultTag', value: ruleForm.name });
 
-        // formEl.resetFields();
+        emit('submited');
+        onClose();
+
+        isSubmitDisabled.value = false;
+
+        dataStore.defaultCategory = ruleForm.category;
+
         ruleForm.cost = 0;
         ruleForm.content = '';
       });
     } else {
-      store.commit('showToast', {
+      ElMessage({
         message: '请输入正确的格式',
         type: 'error',
       });
@@ -205,10 +237,28 @@ const submitForm = async (formEl) => {
   });
 };
 
-const resetForm = (formEl) => {
+const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   formEl.resetFields();
 };
+
+const onClose = () => {
+  emit('close');
+};
+
+watchEffect(() => {
+  dialogVisible.value = props.visible;
+});
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.tags-container {
+  width: 100%;
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  .el-input {
+    width: 60px;
+  }
+}
+</style>

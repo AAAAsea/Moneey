@@ -7,7 +7,10 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    BillingList: typeof import('./src/components/BillingList.vue')['default']
     CalculateMoney: typeof import('./src/components/CalculateMoney.vue')['default']
+    CalenarChart: typeof import('./src/components/CalenarChart.vue')['default']
+    CalendarChart: typeof import('./src/components/CalendarChart.vue')['default']
     ElAutocomplete: typeof import('element-plus/es')['ElAutocomplete']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
@@ -30,9 +33,14 @@ declare module '@vue/runtime-core' {
     ElTimeline: typeof import('element-plus/es')['ElTimeline']
     ElTimelineItem: typeof import('element-plus/es')['ElTimelineItem']
     Footer: typeof import('./src/components/Footer.vue')['default']
+    FormModal: typeof import('./src/components/FormModal.vue')['default']
     FormModel: typeof import('./src/components/FormModel.vue')['default']
+    LineChart: typeof import('./src/components/LineChart.vue')['default']
+    LoginModal: typeof import('./src/components/LoginModal.vue')['default']
     LoginModel: typeof import('./src/components/LoginModel.vue')['default']
     MainContent: typeof import('./src/components/MainContent.vue')['default']
+    PieChartByCategory: typeof import('./src/components/PieChartByCategory.vue')['default']
+    PieChartByTag: typeof import('./src/components/PieChartByTag.vue')['default']
     ProjectHistory: typeof import('./src/components/ProjectHistory.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

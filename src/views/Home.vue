@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h2>个人账户</h2>
-    <el-card shadow="hover"> 我的账户 </el-card>
+    <el-card shadow="hover" @click="toDetail"> 我的账户 </el-card>
     <h2>我的组织</h2>
     <div class="organizations">
       <el-card shadow="hover" v-for="organization in user.organizations">
@@ -14,6 +14,7 @@
 <script lang="ts" setup>
 import { getUserInfo } from '@/api/auth';
 import { useUserStore } from '@/store/user';
+import { useRouter } from 'vue-router';
 
 const user = useUserStore();
 const initUserInfo = async () => {
@@ -22,6 +23,11 @@ const initUserInfo = async () => {
   user.isLogin = true;
 };
 initUserInfo();
+
+const router = useRouter();
+const toDetail = () => {
+  router.push('/detail');
+};
 </script>
 
 <style lang="scss" scoped>

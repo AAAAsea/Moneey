@@ -1,183 +1,7 @@
 <template>
   <div class="main">
     <div class="left no-scroll">
-      <div class="global-total">
-        <span>
-          <count-up
-            :end-val="total"
-            decimalPlaces="2"
-            duration="1.5"
-            prefix="￥"
-            :options="{ separator: ',', prefix: '￥' }"
-          >
-          </count-up>
-        </span>
-      </div>
-      <Transition name="el-fade-in">
-        <h3 class="intro" v-show="data.length === 0">
-          {{ tip }}
-        </h3>
-      </Transition>
-      <TransitionGroup name="fade">
-        <div class="year" v-for="year in data" :key="year.year">
-          <div
-            class="year-title"
-            @click="
-              () => {
-                year.hidden = !year.hidden;
-              }
-            "
-          >
-            <div class="title-content">
-              <h2>{{ year.year }}</h2>
-              <span class="total">
-                <count-up
-                  :end-val="year.total"
-                  decimalPlaces="2"
-                  duration="1.5"
-                  prefix="￥"
-                  :options="{ separator: ',', prefix: '￥' }"
-                >
-                </count-up>
-              </span>
-            </div>
-            <el-icon
-              :style="{
-                transform: year.hidden ? 'rotate(90deg)' : '',
-                transition: '.3s',
-              }"
-            >
-              <ArrowDownBold />
-            </el-icon>
-          </div>
-          <el-collapse-transition>
-            <div v-show="!year.hidden">
-              <TransitionGroup name="fade">
-                <div
-                  class="month"
-                  v-for="month in year.children"
-                  :key="month.month"
-                >
-                  <div
-                    class="month-title"
-                    @click="
-                      () => {
-                        month.hidden = !month.hidden;
-                      }
-                    "
-                  >
-                    <div class="title-content">
-                      <h4>{{ month.month }}月</h4>
-                      <span class="total"
-                        ><count-up
-                          :end-val="month.total"
-                          decimalPlaces="2"
-                          duration="1.5"
-                          prefix="￥"
-                          :options="{ separator: ',', prefix: '￥' }"
-                        >
-                        </count-up
-                      ></span>
-                    </div>
-                    <el-icon
-                      :style="{
-                        transform:
-                          (month.hidden ? 'rotate(90deg)' : '') + ' scale(0.8)',
-                        transition: '.3s',
-                      }"
-                    >
-                      <ArrowDownBold />
-                    </el-icon>
-                  </div>
-                  <el-collapse-transition>
-                    <div v-show="!month.hidden">
-                      <TransitionGroup name="fade">
-                        <div
-                          class="day"
-                          v-for="day in month.children"
-                          :key="day.day"
-                        >
-                          <div class="day-title">
-                            <span class="day-title-left">{{
-                              month.month + '-' + day.day
-                            }}</span>
-                            <span class="day-title-right">
-                              <count-up
-                                :end-val="day.total"
-                                decimalPlaces="2"
-                                duration="1.5"
-                                prefix="￥"
-                                :options="{ separator: ',', prefix: '￥' }"
-                              >
-                              </count-up
-                            ></span>
-                          </div>
-                          <ul>
-                            <TransitionGroup name="fade">
-                              <li
-                                class="item-container"
-                                v-for="item in day.children"
-                                :key="item.id"
-                              >
-                                <el-popconfirm
-                                  title="是否删除？"
-                                  @confirm="deleteItem(item.id)"
-                                >
-                                  <template #reference>
-                                    <div class="item">
-                                      <div class="icon">
-                                        <el-avatar
-                                          class="avatar"
-                                          shape="square"
-                                          :style="{
-                                            backgroundColor: getColorByWord(
-                                              dark === 'light'
-                                                ? vintageTheme.color
-                                                : darkTheme.color,
-                                              item.type[0]
-                                            ),
-                                          }"
-                                        >
-                                          {{ item.type }}
-                                        </el-avatar>
-                                      </div>
-                                      <div class="content-container">
-                                        <div class="content-desc">
-                                          <span class="content">{{
-                                            item.content
-                                          }}</span>
-                                          <span>
-                                            <el-tag
-                                              class="tag"
-                                              type="info"
-                                              effect="dark"
-                                              size="small"
-                                              v-show="item.name.trim() !== ''"
-                                            >
-                                              {{ item.name }}
-                                            </el-tag>
-                                          </span>
-                                        </div>
-                                        <div class="cost">
-                                          ￥{{ item.cost.toFixed(2) }}
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </template>
-                                </el-popconfirm>
-                              </li>
-                            </TransitionGroup>
-                          </ul>
-                        </div>
-                      </TransitionGroup>
-                    </div>
-                  </el-collapse-transition>
-                </div>
-              </TransitionGroup>
-            </div>
-          </el-collapse-transition>
-        </div>
-      </TransitionGroup>
+      <billing-list />
     </div>
     <div class="right">
       <div class="calendar-container no-scroll" ref="calendarContainerRef">
@@ -214,6 +38,7 @@ import CountUp from 'vue-countup-v3';
 import { useSettingsStore } from '@/store/settings';
 import { useUserStore } from '@/store/user';
 import { useModelStore } from '@/store/model';
+import BillingList from '@/components/BillingList.vue';
 
 echarts.registerTheme('dark2', darkTheme);
 echarts.registerTheme('vintage', vintageTheme);
@@ -281,75 +106,75 @@ const initData = () => {
   if (!isLoggedIn.value) {
     return;
   }
-  getList()
-    .then((res) => {
-      tip.value = '点击右下角的加号添加记录吧😋';
-      resetData();
+  // getList()
+  //   .then((res) => {
+  //     tip.value = '点击右下角的加号添加记录吧😋';
+  //     resetData();
 
-      data.push(...res.data);
-      // console.log(res.data);
+  //     data.push(...res.data);
+  //     // console.log(res.data);
 
-      res.data.forEach((year) => {
-        total.value += year.total;
-        year.children.forEach((month) => {
-          month.children.forEach((day) => {
-            const date = echarts.time.parse(
-              year.year + '-' + month.month + '-' + day.day
-            );
-            days.push(date);
-            dayCostData[echarts.time.format(date, '{yyyy}-{MM}-{dd}', false)] =
-              day.total;
-            day.children.forEach((item) => {
-              types.add(item.type);
-              tags.add(item.name);
-              tagTotal.value += item.cost;
+  //     res.data.forEach((year) => {
+  //       total.value += year.total;
+  //       year.children.forEach((month) => {
+  //         month.children.forEach((day) => {
+  //           const date = echarts.time.parse(
+  //             year.year + '-' + month.month + '-' + day.day
+  //           );
+  //           days.push(date);
+  //           dayCostData[echarts.time.format(date, '{yyyy}-{MM}-{dd}', false)] =
+  //             day.total;
+  //           day.children.forEach((item) => {
+  //             types.add(item.type);
+  //             tags.add(item.name);
+  //             tagTotal.value += item.cost;
 
-              const current = pieEchartLeftData.find(
-                (e) => e.name === item.type
-              );
-              if (!current) {
-                pieEchartLeftData.push({
-                  name: item.type,
-                  value: item.cost,
-                });
-              } else {
-                current.value += item.cost;
-              }
+  //             const current = pieEchartLeftData.find(
+  //               (e) => e.name === item.type
+  //             );
+  //             if (!current) {
+  //               pieEchartLeftData.push({
+  //                 name: item.type,
+  //                 value: item.cost,
+  //               });
+  //             } else {
+  //               current.value += item.cost;
+  //             }
 
-              const current2 = pieEchartRightData.find(
-                (e) =>
-                  e.name === (item.name.trim() !== '' ? item.name : '无标签')
-              );
-              if (!current2) {
-                pieEchartRightData.push({
-                  name: item.name.trim() !== '' ? item.name : '无标签',
-                  value: item.cost,
-                });
-              } else {
-                current2.value += item.cost;
-              }
-            });
-          });
-        });
-      });
-      formatLineEchartData();
-      // globalTotal.update(total.value);
-      store.commit('updateData', {
-        key: 'types',
-        value: [...types],
-      });
+  //             const current2 = pieEchartRightData.find(
+  //               (e) =>
+  //                 e.name === (item.name.trim() !== '' ? item.name : '无标签')
+  //             );
+  //             if (!current2) {
+  //               pieEchartRightData.push({
+  //                 name: item.name.trim() !== '' ? item.name : '无标签',
+  //                 value: item.cost,
+  //               });
+  //             } else {
+  //               current2.value += item.cost;
+  //             }
+  //           });
+  //         });
+  //       });
+  //     });
+  //     formatLineEchartData();
+  //     // globalTotal.update(total.value);
+  //     store.commit('updateData', {
+  //       key: 'types',
+  //       value: [...types],
+  //     });
 
-      store.commit('updateData', {
-        key: 'tags',
-        value: [...tags],
-      });
-    })
-    .catch(() => {
-      tip.value = '😭拉取失败...';
-    })
-    .finally(() => {
-      nextTick(initEchart);
-    });
+  //     store.commit('updateData', {
+  //       key: 'tags',
+  //       value: [...tags],
+  //     });
+  //   })
+  //   .catch(() => {
+  //     tip.value = '😭拉取失败...';
+  //   })
+  //   .finally(() => {
+  //     nextTick(initEchart);
+  //   });
 };
 
 const deleteItem = (id) => {
@@ -897,3 +722,4 @@ ul {
   position: absolute;
 }
 </style>
+@/store/modal
