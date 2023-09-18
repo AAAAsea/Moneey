@@ -158,8 +158,8 @@ const initChartsData = async () => {
   }
   .calendar-container {
     height: 220px;
-    padding-right: 50px;
-    overflow-x: auto;
+    width: 90%;
+    margin: 0 auto;
 
     .calendar-chart {
       margin-left: 15px;

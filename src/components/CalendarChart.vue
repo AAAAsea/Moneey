@@ -59,11 +59,12 @@ const initEchart = () => {
       },
     ],
   });
-
-  calendarContainerRef.value.scrollLeft =
-    ((new Date().getMonth() + 1) / 12) *
-    (calendarContainerRef.value.scrollWidth -
-      calendarContainerRef.value.offsetWidth);
+  if (calendarContainerRef.value) {
+    calendarContainerRef.value.scrollLeft =
+      ((new Date().getMonth() + 1) / 12) *
+      (calendarContainerRef.value.scrollWidth -
+        calendarContainerRef.value.offsetWidth);
+  }
 };
 
 watch(props, () => {
