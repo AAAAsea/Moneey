@@ -31,7 +31,7 @@
         </el-icon>
       </span>
       <!-- 设置 -->
-      <span class="settings icon">
+      <span class="settings icon" @click="toSettings">
         <el-icon>
           <Setting />
         </el-icon>
@@ -51,6 +51,7 @@ import {
   MoonNight,
   Money,
 } from '@element-plus/icons-vue';
+import { useRouter } from 'vue-router';
 
 const settings = useSettingsStore();
 const user = useUserStore();
@@ -66,6 +67,11 @@ const logout = () => {
   user.$reset();
   router.push('/login');
 };
+
+const router = useRouter()
+const toSettings = ()=>{
+  router.push('/settings')
+}
 </script>
 
 <style scoped lang="scss">

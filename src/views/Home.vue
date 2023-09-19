@@ -1,20 +1,18 @@
 <template>
   <div class="home">
     <h2>个人账户</h2>
-    <el-card shadow="hover" @click="toDetail"> 我的账户 </el-card>
+    <AccountCard title="我的账户" :cost="1000"></AccountCard>
     <h2>我的组织</h2>
     <div class="organizations">
-      <el-card shadow="hover" v-for="organization in user.organizations">
-        {{ organization.name }}
-      </el-card>
+      <AccountCard :title="organization.name" :cost="1000" v-for="organization in user.organizations"></AccountCard>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { getUserInfo } from '@/api/auth';
+import AccountCard from '@/components/AccountCard.vue';
 import { useUserStore } from '@/store/user';
-import { useRouter } from 'vue-router';
 
 const user = useUserStore();
 const initUserInfo = async () => {
@@ -23,17 +21,17 @@ const initUserInfo = async () => {
   user.isLogin = true;
 };
 initUserInfo();
-
-const router = useRouter();
-const toDetail = () => {
-  router.push('/detail');
-};
 </script>
 
 <style lang="scss" scoped>
 .home {
   padding: 0 20px;
   min-height: 100vh;
+  .account-card{
+    height: 150px;
+    width: 300px;
+    cursor: pointer;
+  }
 
   .organizations {
     display: flex;
