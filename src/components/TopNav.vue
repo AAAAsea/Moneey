@@ -2,11 +2,10 @@
   <div class="topnav">
     <div class="left">
       <!-- 账户 -->
+      <el-avatar :size="30" :src="favicon" @click="toHome" />
       <el-popconfirm title="退出登录？" @confirm="logout">
         <template #reference>
-          <span class="header baseline">
-            {{ user.nickname }}
-          </span>
+          <span class="nickname baseline"> {{ user.nickname }} </span>
         </template>
       </el-popconfirm>
     </div>
@@ -41,23 +40,23 @@
 </template>
 
 <script setup lang="ts">
-import { router } from '@/router/Index';
-import { useSettingsStore } from '@/store/settings';
-import { useUserStore } from '@/store/user';
+import { useSettingsStore } from "@/store/settings";
+import { useUserStore } from "@/store/user";
 import {
   Clock,
   Setting,
   Sunrise,
   MoonNight,
   Money,
-} from '@element-plus/icons-vue';
-import { useRouter } from 'vue-router';
+} from "@element-plus/icons-vue";
+import { useRouter } from "vue-router";
+import favicon from "@/assets/favicon.svg";
 
 const settings = useSettingsStore();
 const user = useUserStore();
 
 const changeTheme = () => {
-  const newTheme = settings.theme === 'light' ? 'dark' : 'light';
+  const newTheme = settings.theme === "light" ? "dark" : "light";
   document.documentElement.className = newTheme;
   settings.theme = newTheme;
 };
@@ -65,40 +64,40 @@ document.documentElement.className = settings.theme;
 
 const logout = () => {
   user.$reset();
-  router.push('/login');
+  router.push("/login");
 };
 
-const router = useRouter()
-const toSettings = ()=>{
-  router.push('/settings')
-}
+const router = useRouter();
+const toSettings = () => {
+  router.push("/settings");
+};
+
+const toHome = () => {
+  router.push("/");
+};
 </script>
 
 <style scoped lang="scss">
 .topnav {
-  width: 100%;
-  top: 0;
   z-index: 20;
   background: radial-gradient(transparent 1px, var(--bg-transparant-color) 1px);
   backdrop-filter: saturate(100%) blur(10px);
-  height: 50px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .left {
-  position: absolute;
-  left: 20px;
-  top: 12px;
-  display: flex;
-  gap: 10px;
-}
-.right {
-  position: absolute;
-  right: 20px;
-  top: 12px;
   display: flex;
   gap: 10px;
   align-items: center;
 }
-.header {
+.right {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.nickname {
   cursor: pointer;
   font-size: 1.2em;
   font-weight: bold;
@@ -118,9 +117,13 @@ const toSettings = ()=>{
     transform: rotate(180deg);
   }
 }
+.baseline {
+  position: relative;
+}
 .baseline::after {
-  content: '';
+  content: "";
   display: block;
+  position: absolute;
   height: 2px;
   width: 0%;
   margin-top: 3px;
@@ -129,5 +132,9 @@ const toSettings = ()=>{
 }
 .baseline:hover::after {
   width: 100%;
+}
+
+.el-avatar {
+  cursor: pointer;
 }
 </style>
