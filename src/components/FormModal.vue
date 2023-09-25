@@ -109,6 +109,7 @@
 
 <script lang="ts" setup>
 import { addRecord } from '@/api/list';
+import { useRoute } from 'vue-router';
 import { computed, reactive, ref, watchEffect, nextTick } from 'vue';
 import { formatDate } from '@/utils/tools.ts';
 import { useDataStore } from '@/store/data';
@@ -120,6 +121,7 @@ const props = defineProps({
   visible: Boolean,
 });
 const emit = defineEmits(['close', 'submited']);
+const route = useRoute();
 
 const dataStore = useDataStore();
 const modalStore = useModalStore();
@@ -212,7 +214,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate((valid: boolean) => {
     if (valid) {
       isSubmitDisabled.value = true;
-      addRecord(ruleForm).then(() => {
+      addRecord({
+        ...ruleForm,
+        organizationName: route.query.organizationName as string,
+      }).then(() => {
         ElMessage({
           message: '提交成功',
           type: 'success',
@@ -223,7 +228,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
         isSubmitDisabled.value = false;
 
-        dataStore.defaultCategory = ruleForm.category;
+        dataStore.defaultCategory = ruleForm.categoryName;
 
         ruleForm.cost = 0;
         ruleForm.content = '';

@@ -1,6 +1,7 @@
 <template>
   <div class="billing-list">
     <div class="global-total">
+      <h1>{{ title }}</h1>
       <span>
         <count-up
           :end-val="total"
@@ -12,9 +13,7 @@
         </count-up>
       </span>
     </div>
-    <h3 class="intro" v-show="recordList.length === 0">
-      {{ '数据拉取中' }}
-    </h3>
+    <el-empty v-show="recordList.length === 0 && inited"></el-empty>
     <TransitionGroup name="fade">
       <div class="year" v-for="year in recordList" :key="year.yearName">
         <div
@@ -147,7 +146,6 @@
                                         <div class="tags-container">
                                           <el-tag
                                             class="tag"
-                                            type="info"
                                             effect="dark"
                                             size="small"
                                             v-for="(tag, index) in item.tags"
@@ -158,8 +156,19 @@
                                           </el-tag>
                                         </div>
                                       </div>
-                                      <div class="cost">
-                                        ￥{{ item.cost.toFixed(2) }}
+                                      <div class="cost-container">
+                                        <span
+                                          class="nickname"
+                                          v-show="
+                                            item.nickname && organizationName
+                                          "
+                                        >
+                                          <el-icon><UserFilled /></el-icon>
+                                          {{ item.nickname }}
+                                        </span>
+                                        <span class="cost"
+                                          >￥{{ item.cost }}</span
+                                        >
                                       </div>
                                     </div>
                                   </div>
@@ -182,8 +191,9 @@
 </template>
 
 <script lang="ts" setup>
+import { useRoute } from 'vue-router';
 import { IYearData } from '@/types/data';
-import { ArrowDownBold } from '@element-plus/icons-vue';
+import { ArrowDownBold, UserFilled } from '@element-plus/icons-vue';
 import { getColorByWord } from '@/utils/tools';
 import { useSettingsStore } from '@/store/settings';
 import darkTheme from '@/themes/dark.json';
@@ -194,6 +204,8 @@ import { deleteRecord } from '@/api/list';
 defineProps<{
   recordList: IYearData[];
   total: number;
+  title: string;
+  inited: boolean;
 }>();
 
 const emit = defineEmits(['deleted']);
@@ -205,6 +217,8 @@ const deleteItem = (id: number) => {
     emit('deleted');
   });
 };
+
+const organizationName = useRoute().query.organizationName;
 </script>
 
 <style lang="scss" scoped>
@@ -215,7 +229,8 @@ const deleteItem = (id: number) => {
   }
   .global-total {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     font-size: 0.5em;
     opacity: 0.8;
   }
@@ -319,13 +334,18 @@ const deleteItem = (id: number) => {
             flex-wrap: wrap;
             gap: 5px;
           }
-          .tag {
-            color: var(--font-color);
+        }
+        .cost-container {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          .nickname {
+            font-size: 10px;
             opacity: 0.8;
           }
-        }
-        .cost {
-          font-weight: bold;
+          .cost {
+            font-weight: bold;
+          }
         }
       }
     }

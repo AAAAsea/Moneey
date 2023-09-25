@@ -23,6 +23,7 @@ const initEchart = () => {
   // 初始化
   echartInstance.value = echarts.init(echartRef.value, props.theme);
   echartInstance.value.setOption({
+    darkMode: 'auto',
     tooltip: {
       formatter: (params: any) =>
         params.value[0] + '  ￥' + Math.round(params.value[1] * 100) / 100,
@@ -31,7 +32,7 @@ const initEchart = () => {
     gradientColor: ['#6d6868', '#dd6b66'],
     visualMap: {
       min: 1,
-      max: 500,
+      max: 1000,
       show: false,
       type: 'piecewise',
       minOpen: true,
@@ -42,6 +43,15 @@ const initEchart = () => {
       {
         range: new Date().getFullYear(),
         cellSize: ['auto', 20],
+        yearLabel: {
+          color: props.theme === 'dark' ? '#ccc' : '#000',
+        },
+        monthLabel: {
+          color: props.theme === 'dark' ? '#ccc' : '#000',
+        },
+        dayLabel: {
+          color: props.theme === 'dark' ? '#ccc' : '#000',
+        },
       },
     ],
     series: [

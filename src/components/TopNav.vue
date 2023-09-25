@@ -2,7 +2,7 @@
   <div class="topnav">
     <div class="left">
       <!-- 账户 -->
-      <el-avatar :size="30" :src="favicon" @click="toHome" />
+      <el-avatar :size="30" :src="favicon" @click="toHome" class="avatar" />
       <el-popconfirm title="退出登录？" @confirm="logout">
         <template #reference>
           <span class="nickname baseline"> {{ user.nickname }} </span>
@@ -40,23 +40,23 @@
 </template>
 
 <script setup lang="ts">
-import { useSettingsStore } from "@/store/settings";
-import { useUserStore } from "@/store/user";
+import { useSettingsStore } from '@/store/settings';
+import { useUserStore } from '@/store/user';
 import {
   Clock,
   Setting,
   Sunrise,
   MoonNight,
   Money,
-} from "@element-plus/icons-vue";
-import { useRouter } from "vue-router";
-import favicon from "@/assets/favicon.svg";
+} from '@element-plus/icons-vue';
+import { useRouter } from 'vue-router';
+import favicon from '@/assets/favicon.svg';
 
 const settings = useSettingsStore();
 const user = useUserStore();
 
 const changeTheme = () => {
-  const newTheme = settings.theme === "light" ? "dark" : "light";
+  const newTheme = settings.theme === 'light' ? 'dark' : 'light';
   document.documentElement.className = newTheme;
   settings.theme = newTheme;
 };
@@ -64,20 +64,23 @@ document.documentElement.className = settings.theme;
 
 const logout = () => {
   user.$reset();
-  router.push("/login");
+  router.push('/login');
 };
 
 const router = useRouter();
 const toSettings = () => {
-  router.push("/settings");
+  router.push('/settings');
 };
 
 const toHome = () => {
-  router.push("/");
+  router.push('/');
 };
 </script>
 
 <style scoped lang="scss">
+.avatar {
+  background: transparent;
+}
 .topnav {
   z-index: 20;
   background: radial-gradient(transparent 1px, var(--bg-transparant-color) 1px);
@@ -121,7 +124,7 @@ const toHome = () => {
   position: relative;
 }
 .baseline::after {
-  content: "";
+  content: '';
   display: block;
   position: absolute;
   height: 2px;

@@ -1,30 +1,43 @@
 <template>
-  <h2>Organizations</h2>
-  <div class="org-container">
-    <div class="org-item">
-      <div class="info">
-        <h3>Test</h3>
-        <el-tag>OWNER</el-tag>
-      </div>
-      <div class="operates">
-        <el-button type="primary">离开</el-button>
-      </div>
-    </div>
+  <div class="header">
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item :to="{ path: '/settings/organization' }" replace
+        >Organization List</el-breadcrumb-item
+      >
+      <el-breadcrumb-item replace>{{ orgName }}</el-breadcrumb-item>
+    </el-breadcrumb>
   </div>
+  <RouterView
+    :orgList="orgList"
+    @update="fetchOrgList"
+    :inited="inited"
+  ></RouterView>
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import { getOrgList } from '@/api/org';
+import { IOrgList } from '@/types/org';
+
+const route = useRoute();
+const orgName = computed(() => route.params.name);
+const orgList = ref<IOrgList>([]);
+const inited = ref(false);
+
+const fetchOrgList = async () => {
+  orgList.value = await getOrgList();
+  inited.value = true;
+};
+fetchOrgList();
+</script>
 
 <style lang="scss" scoped>
-.org-item {
+.header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-
-  .info {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
+  border-bottom: 1px solid #666;
+  padding: 10px 0;
 }
 </style>
+@/api/org

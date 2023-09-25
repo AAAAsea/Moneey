@@ -17,8 +17,12 @@
 <script lang="ts" setup>
 const menuList = [
   {
-    name: "Organizations",
-    path: "/settings/organizations",
+    name: 'Profile',
+    path: '/settings/profile',
+  },
+  {
+    name: 'Organizations',
+    path: '/settings/organization',
   },
 ];
 </script>
@@ -38,8 +42,11 @@ const menuList = [
       cursor: pointer;
       padding: 5px 10px;
       margin-right: 20px;
-      color: #333333;
+      margin-bottom: 2px;
+      color: var(--second-color);
+      transition: 0.3s;
 
+      &.router-link-active,
       &:hover {
         background-color: rgba($color: #000000, $alpha: 0.1);
       }
@@ -47,7 +54,13 @@ const menuList = [
   }
 
   .content {
-    background: rgba($color: #000000, $alpha: 0.1);
+    border-radius: 5px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .settings {
+    flex-direction: column;
   }
 }
 </style>

@@ -35,14 +35,16 @@ export interface IRecordItem {
   content: string;
   cost: number;
   date: string;
+  nickname: string;
 }
 
 export interface IAddRecordParams {
   date: string;
   cost: number;
   tags: string[];
-  category: string;
+  categoryName: string;
   content: string;
+  organizationName: string;
 }
 
 export interface IBaseDayData {

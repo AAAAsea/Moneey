@@ -1,3 +1,5 @@
+import { ROLE } from '@/constants/org';
+
 export interface IBaseUserInfo {
   userId: number;
   nickname: string;
@@ -7,7 +9,9 @@ export interface IBaseUserInfo {
 export interface IOrganization {
   id: number;
   name: string;
-  createdTime: string;
+  createTime: string;
+  cost: number;
+  role: ROLE;
 }
 
 export type Organizations = IOrganization[];
@@ -16,6 +20,7 @@ export interface IUserState extends IBaseUserInfo {
   isLogin: boolean;
   token: string;
   organizations: Organizations;
+  cost: number;
 }
 
 export interface IUserProfile extends IBaseUserInfo {
@@ -28,3 +33,4 @@ export interface IRegisterParams {
   nickname: string;
 }
 
+export type IBaseUserList = IBaseUserInfo[];

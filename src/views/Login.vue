@@ -2,18 +2,43 @@
   <el-card class="login-card">
     <h2 class="title">登录</h2>
     <!-- 登录 -->
-    <el-form ref="ruleFormRef" :model="ruleForm" :rules="rules" class="rule-form" label-position="top"
-      @keyup="handleFormClick">
-      <el-form-item :label="$t('login.account')" label-width="auto" prop="account">
-        <el-input v-model="ruleForm.account" autocomplete="off" :placeholder="$t('login.accountPlace')" />
+    <el-form
+      ref="ruleFormRef"
+      :model="ruleForm"
+      :rules="rules"
+      class="rule-form"
+      label-position="top"
+      @keyup="handleFormClick"
+    >
+      <el-form-item
+        :label="$t('login.account')"
+        label-width="auto"
+        prop="account"
+      >
+        <el-input
+          v-model="ruleForm.account"
+          autocomplete="off"
+          :placeholder="$t('login.accountPlace')"
+        />
       </el-form-item>
-      <el-form-item :label="$t('login.password')" label-width="auto" prop="password">
-        <el-input v-model="ruleForm.password" autocomplete="off" :placeholder="$t('login.passwordPlace')" show-password />
+      <el-form-item
+        :label="$t('login.password')"
+        label-width="auto"
+        prop="password"
+      >
+        <el-input
+          v-model="ruleForm.password"
+          autocomplete="off"
+          :placeholder="$t('login.passwordPlace')"
+          show-password
+        />
       </el-form-item>
     </el-form>
 
     <div class="footer">
-      <el-button type="text" style="cursor: pointer" @click="toRegister">前往注册</el-button>
+      <el-button type="text" style="cursor: pointer" @click="toRegister"
+        >前往注册</el-button
+      >
       <!-- <el-button
               type="text"
               v-if="type === 'login'"
@@ -21,8 +46,13 @@
               style="color: var(--primary-color); cursor: pointer"
               >{{ '忘记密码？' }}</el-button
             > -->
-      <el-button type="primary" @click="submit(ruleFormRef)"
-        style="backgroundcolor: var(--primary-color); border: none">登录</el-button>
+      <el-button
+        type="primary"
+        @click="submit(ruleFormRef)"
+        style="backgroundcolor: var(--primary-color); border: none"
+        :disabled="!canSubmit"
+        >登录</el-button
+      >
     </div>
   </el-card>
 </template>
@@ -79,7 +109,13 @@ function handleFormClick(e: KeyboardEvent) {
 function submit(formEl: FormInstance | undefined) {
   if (!canSubmit.value) return; // 禁止连续提交
   canSubmit.value = false;
+
+  console.log('login');
+
   if (!formEl) return;
+
+  console.log('login');
+
   formEl.validate((valid: boolean) => {
     if (valid) {
       login(ruleForm.account, ruleForm.password)
@@ -89,7 +125,9 @@ function submit(formEl: FormInstance | undefined) {
           user.isLogin = true;
           user.token = res.jwt;
         })
-        .catch(() => {
+        .finally(() => {
+          console.log('hhh');
+
           canSubmit.value = true;
         });
     }

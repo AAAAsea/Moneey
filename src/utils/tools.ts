@@ -1,3 +1,5 @@
+import { ROLE } from '@/constants/org';
+
 export function getMonthAndDate(timestamp) {
   let date = new Date(timestamp);
   let month = date.getMonth() + 1;
@@ -53,3 +55,18 @@ export function formatDate(
 
   return formattedDate;
 }
+
+export const getRoleLabelByBalue = (value: number) => {
+  return Object.entries(ROLE).find(([_, val]) => val === value)?.[0] || '';
+};
+
+export const getTagTypeByRole = (role: ROLE) => {
+  switch (role) {
+    case ROLE.Owner:
+      return 'danger';
+    case ROLE.Admin:
+      return 'warning';
+    default:
+      return 'info';
+  }
+};

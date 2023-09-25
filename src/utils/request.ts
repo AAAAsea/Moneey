@@ -18,9 +18,16 @@ service.interceptors.request.use((config) => {
 // 返回拦截
 service.interceptors.response.use(
   (response) => {
+    if (response.data.message) {
+      ElMessage.success(response.data.message);
+    }
     return response.data;
   },
   (error) => {
+    console.log(error);
+    if (error.response.data.message) {
+      ElMessage.error(error.response.data.message);
+    }
     if (error.response.status === 401) {
       location.href = '/login';
     }

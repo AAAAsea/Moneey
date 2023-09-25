@@ -19,46 +19,71 @@ export function addRecord(data: IAddRecordParams) {
 /**
  * 查询
  */
-export function getList(): Promise<IRecordData> {
+export function getList(organizationName?: string): Promise<IRecordData> {
   return request({
     url: '/record',
     method: 'get',
+    params: {
+      organizationName,
+    },
   });
 }
+
 /**
  * 查询某一年
  */
-export function getListPerYear(year: number): Promise<[string, number][]> {
+export function getListPerYear(
+  year: number,
+  organizationName?: string
+): Promise<[string, number][]> {
   return request({
     url: `/record/year/${year}`,
     method: 'get',
+    params: {
+      organizationName,
+    },
   });
 }
 /**
  * 查询每一天
  */
-export function getListPerDay(): Promise<IBaseDayData[]> {
+export function getListPerDay(
+  organizationName: string
+): Promise<IBaseDayData[]> {
   return request({
     url: `/record/day`,
     method: 'get',
+    params: {
+      organizationName,
+    },
   });
 }
 /**
  * 根据类别分组查询
  */
-export function getListPerCategory(): Promise<IPieChartDataItem[]> {
+export function getListPerCategory(
+  organizationName?: string
+): Promise<IPieChartDataItem[]> {
   return request({
     url: `/record/category`,
     method: 'get',
+    params: {
+      organizationName,
+    },
   });
 }
 /**
  * 根据tag分组查询
  */
-export function getListPerTag(): Promise<IPieChartDataItem[]> {
+export function getListPerTag(
+  organizationName: string
+): Promise<IPieChartDataItem[]> {
   return request({
     url: `/record/tag`,
     method: 'get',
+    params: {
+      organizationName,
+    },
   });
 }
 /**

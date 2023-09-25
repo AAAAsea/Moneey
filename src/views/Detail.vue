@@ -2,8 +2,10 @@
   <div class="main">
     <div class="left no-scroll">
       <billing-list
+        :title="organizationName || '个人账户'"
         :recordList="recordList"
         :total="total"
+        :inited="inited"
         @deleted="initData"
       />
     </div>
@@ -61,6 +63,7 @@ import {
   getListPerTag,
 } from '@/api/list.js';
 import { computed, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { ILineChartData, IPieChartDataItem, IYearData } from '@/types/data.ts';
 import { Plus } from '@element-plus/icons-vue';
 import { useSettingsStore } from '@/store/settings';
@@ -75,12 +78,15 @@ const settingsStore = useSettingsStore();
 
 const total = ref(0);
 const recordList = ref<IYearData[]>([]);
+const inited = ref(false);
 
+const organizationName = useRoute().query.organizationName;
 const initData = async () => {
-  const res = await getList();
+  const res = await getList(organizationName as string);
   total.value = res.total;
   recordList.value = res.data;
   initChartsData();
+  inited.value = true;
 };
 initData();
 
@@ -93,7 +99,7 @@ const onModalClose = () => {
 };
 
 const echartTheme = computed(() =>
-  settingsStore.theme === 'light' ? 'vintage' : 'dark2'
+  settingsStore.theme === 'light' ? 'vintage' : 'dark'
 );
 
 const calendarChartData = ref<[string, number][]>();
@@ -103,10 +109,12 @@ const pieChartByTagData = ref<IPieChartDataItem[]>();
 
 const initChartsData = async () => {
   calendarChartData.value = (
-    await getListPerYear(new Date().getFullYear())
+    await getListPerYear(new Date().getFullYear(), organizationName as string)
   ).map((item) => [formatDate(item[0]), item[1]]);
 
-  lineChartData.value = (await getListPerDay()).reduce(
+  lineChartData.value = (
+    await getListPerDay(organizationName as string)
+  ).reduce(
     (prev, cur) => {
       prev.x.push(formatDate(cur.date));
       prev.y.push(cur.cost);
@@ -115,9 +123,11 @@ const initChartsData = async () => {
     { x: [] as string[], y: [] as number[] }
   );
 
-  pieChartByCategoryData.value = await getListPerCategory();
+  pieChartByCategoryData.value = await getListPerCategory(
+    organizationName as string
+  );
 
-  pieChartByTagData.value = await getListPerTag();
+  pieChartByTagData.value = await getListPerTag(organizationName as string);
 };
 </script>
 
@@ -158,8 +168,9 @@ const initChartsData = async () => {
   }
   .calendar-container {
     height: 220px;
-    width: 90%;
-    margin: 0 auto;
+    width: 95%;
+    padding: 0 1%;
+    box-sizing: border-box;
 
     .calendar-chart {
       margin-left: 15px;

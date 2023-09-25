@@ -1,42 +1,59 @@
 <template>
-   <el-card shadow="hover" @click="toDetail" class="account-card">
-        <div>
-            <span class="title">{{ title }}</span>
-            <span class="cost">{{ cost }}</span>
-        </div>
-   </el-card>
+  <el-card shadow="hover" class="account-card">
+    <div class="header">
+      <span class="title">{{ title }}</span>
+      <el-tag :type="getTagTypeByRole(role)">{{
+        getRoleLabelByBalue(role)
+      }}</el-tag>
+    </div>
+    <div class="cost">￥ {{ cost }}</div>
+    <div class="date" v-if="date">{{ formatDate(date) }}</div>
+  </el-card>
 </template>
 
 <script lang="ts" setup>
-import { useRouter } from 'vue-router';
+import { ROLE } from '@/constants/org';
+import {
+  formatDate,
+  getRoleLabelByBalue,
+  getTagTypeByRole,
+} from '@/utils/tools';
 
-defineProps({
-    title: String,
-    cost: Number
-})
-
-const router = useRouter();
-const toDetail = () => {
-  router.push('/detail');
-};
+defineProps<{
+  title: String;
+  cost: Number;
+  role: ROLE;
+  date?: string;
+}>();
 </script>
 
 <style lang="scss" scoped>
-
-.account-card{
-    height: 150px;
-    width: 300px;
-    cursor: pointer;
+.account-card {
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  .header {
     display: flex;
-    flex-direction: column;
-    .title{
-        font-size: 18px;
-        font-weight: bold;
+    gap: 10px;
+    align-items: center;
+
+    .title {
+      font-size: 18px;
+      font-weight: bold;
     }
-    .cost{
-        font-size: 20px;
-        font-weight: bold;
-        color: aquamarine;
-    }
+  }
+
+  .cost {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin: 20px;
+  }
+
+  .date {
+    text-align: right;
+  }
 }
 </style>

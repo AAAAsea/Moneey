@@ -1,10 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '@/views/Home.vue';
-import Detail from '@/views/Detail.vue';
-import Login from '@/views/Login.vue';
-import Register from '@/views/Register.vue';
-import Settings from '@/views/Settings.vue';
-import Organization from '@/components/Organization.vue';
+
+const Home = () => import('@/views/Home.vue');
+const Detail = () => import('@/views/Detail.vue');
+const Login = () => import('@/views/Login.vue');
+const Register = () => import('@/views/Register.vue');
+const Settings = () => import('@/views/Settings.vue');
+const Organization = () => import('@/components/Organization.vue');
+const OrganizationList = () => import('@/components/OrganizationList.vue');
+const OrganizationDetail = () => import('@/components/OrganizationDetail.vue');
+const Profile = () => import('@/components/Profile.vue');
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -30,10 +34,32 @@ export const router = createRouter({
       component: Settings,
       children: [
         {
-          path: 'organizations',
-          component: Organization
-        }
-      ]
+          path: 'profile',
+          component: Profile,
+        },
+        {
+          path: '',
+          redirect: '/settings/profile',
+        },
+        {
+          path: 'organization',
+          component: Organization,
+          children: [
+            {
+              path: 'list',
+              component: OrganizationList,
+            },
+            {
+              path: '',
+              redirect: '/settings/organization/list',
+            },
+            {
+              path: ':name',
+              component: OrganizationDetail,
+            },
+          ],
+        },
+      ],
     },
   ],
 });

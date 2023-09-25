@@ -1,18 +1,32 @@
 <template>
   <div class="home">
     <h2>个人账户</h2>
-    <AccountCard title="我的账户" :cost="1000"></AccountCard>
+    <AccountCard
+      :role="ROLE.Owner"
+      title="我的账户"
+      @click="toDetail"
+      :cost="user.cost"
+    ></AccountCard>
     <h2>我的组织</h2>
     <div class="organizations">
-      <AccountCard :title="organization.name" :cost="1000" v-for="organization in user.organizations"></AccountCard>
+      <AccountCard
+        :role="organization.role"
+        :title="organization.name"
+        :cost="organization.cost"
+        :date="organization.createTime"
+        @click="toOrgDetail(organization.name)"
+        v-for="organization in user.organizations"
+      ></AccountCard>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from 'vue-router';
 import { getUserInfo } from '@/api/auth';
-import AccountCard from '@/components/AccountCard.vue';
 import { useUserStore } from '@/store/user';
+import AccountCard from '@/components/AccountCard.vue';
+import { ROLE } from '@/constants/org';
 
 const user = useUserStore();
 const initUserInfo = async () => {
@@ -21,20 +35,23 @@ const initUserInfo = async () => {
   user.isLogin = true;
 };
 initUserInfo();
+
+const router = useRouter();
+const toDetail = () => {
+  router.push('/detail');
+};
+const toOrgDetail = (name: string) => {
+  router.push(`/detail?organizationName=${name}`);
+};
 </script>
 
 <style lang="scss" scoped>
 .home {
   padding: 0 20px;
   min-height: 100vh;
-  .account-card{
-    height: 150px;
-    width: 300px;
-    cursor: pointer;
-  }
-
   .organizations {
     display: flex;
+    flex-wrap: wrap;
     gap: 20px;
   }
 }
