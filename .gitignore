@@ -26,3 +26,8 @@ dist-ssr
 # backend
 backend
 .env
+
+# deploy
+Makefile
+upload.bat
+.env.development

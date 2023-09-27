@@ -48,7 +48,7 @@ export default defineConfig({
       // 代理
       '/api': {
         // target: 'http://192.168.0.143:4100',
-        // target: 'http://124.222.44.34:4100',
+        // target: 'http://124.222.44.34:4200',
         target: env.VITE_HOST,
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),

@@ -11,11 +11,11 @@
     </div>
     <div class="right">
       <!-- 结账 -->
-      <span class="icon">
+      <!-- <span class="icon">
         <el-icon>
           <Money />
         </el-icon>
-      </span>
+      </span> -->
       <!-- 主题 -->
       <span class="icon" @click="changeTheme">
         <el-icon>
@@ -24,13 +24,13 @@
         </el-icon>
       </span>
       <!-- 更新记录 -->
-      <span class="history icon">
+      <span class="history icon" @click="toHistory">
         <el-icon>
           <Clock />
         </el-icon>
       </span>
       <!-- 设置 -->
-      <span class="settings icon" @click="toSettings">
+      <span class="settings icon" @click="toSettings" v-show="user.isLogin">
         <el-icon>
           <Setting />
         </el-icon>
@@ -47,7 +47,7 @@ import {
   Setting,
   Sunrise,
   MoonNight,
-  Money,
+  // Money,
 } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 import favicon from '@/assets/favicon.svg';
@@ -73,8 +73,12 @@ const toSettings = () => {
 };
 
 const toHome = () => {
-  router.push('/');
+  user.isLogin ? router.push('/') : router.push('/login');
 };
+
+const toHistory = ()=>{
+  router.push('/history')
+}
 </script>
 
 <style scoped lang="scss">

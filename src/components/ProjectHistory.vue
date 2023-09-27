@@ -1,33 +1,28 @@
 <template>
-  <el-dialog
-    v-modal="modal.projectHistory"
-    title="更新记录"
-    :width="modal.width"
-  >
-    <div id="tree" style="height: 60vh; overflow: auto">
-      <el-timeline>
-        <el-timeline-item
-          v-for="(activity, index) in activities"
-          :key="index"
-          :icon="activity.icon"
-          :type="activity.type"
-          :color="activity.color"
-          :size="activity.size"
-          :hollow="activity.hollow"
-          :timestamp="activity.timestamp"
-        >
-          {{ activity.content }}
-        </el-timeline-item>
-      </el-timeline>
-    </div>
-  </el-dialog>
+  <el-card>
+    <el-timeline>
+      <el-timeline-item
+        v-for="(activity, index) in activities"
+        :key="index"
+        :type="activity.type"
+        :size="activity.size"
+        :timestamp="activity.timestamp"
+      >
+        {{ activity.content }}
+      </el-timeline-item>
+    </el-timeline>
+  </el-card>
 </template>
 
 <script lang="ts" setup>
-import { useModalStore } from '@/store/modal';
 
-const modal = useModalStore();
 const activities = [
+  {
+    content: '史诗级重构上线，支持个人账户和多组织账户',
+    timestamp: '2023-9-27',
+    size: 'large',
+    type: 'primary',
+  },
   {
     content: '添加时，标签和类型默认为上一次的内容，时间默认是今天',
     timestamp: '2023-8-16',
@@ -68,20 +63,5 @@ const activities = [
 </script>
 
 <style scoped>
-/*滚动条样式*/
-#tree::-webkit-scrollbar {
-  width: 6px;
-  /*height: 4px;*/
-}
-#tree::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  /* -webkit-box-shadow: inset 0 0 5px rgba(145, 145, 145, 0.2); */
-  background: rgba(147, 147, 147, 0.2);
-}
-#tree::-webkit-scrollbar-track {
-  /* -webkit-box-shadow: inset 0 0 5px rgba(149, 149, 149, 0.2); */
-  border-radius: 0;
-  background: rgba(174, 174, 174, 0.1);
-}
+
 </style>
-@/store/modal

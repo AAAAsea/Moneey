@@ -10,7 +10,7 @@
       />
     </div>
     <div class="right">
-      <div class="calendar-container no-scroll">
+      <div class="calendar-container no-scroll" ref="calendarChartRef">
         <CalendarChart
           class="calendar-chart"
           :theme="echartTheme"
@@ -33,7 +33,6 @@
           :theme="echartTheme"
           :total="total"
         ></PieChartByTag>
-        <div id="pie-chart-tag" ref="pieChartRightRef"></div>
       </div>
     </div>
     <form-modal
@@ -62,7 +61,7 @@ import {
   getListPerYear,
   getListPerTag,
 } from '@/api/list.js';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { ILineChartData, IPieChartDataItem, IYearData } from '@/types/data.ts';
 import { Plus } from '@element-plus/icons-vue';
@@ -76,11 +75,17 @@ import { formatDate } from '@/utils/tools';
 
 const settingsStore = useSettingsStore();
 
+const calendarChartRef = ref<HTMLElement>();
+onMounted(()=>{
+  const el = calendarChartRef.value;
+  if(el) el.scrollLeft = new Date().getMonth() / 12 * (el.scrollWidth - el.clientWidth); // scrollWidth = scrollLeft + clientWidth 
+})
+
 const total = ref(0);
 const recordList = ref<IYearData[]>([]);
 const inited = ref(false);
 
-const organizationName = useRoute().query.organizationName;
+const organizationName = useRoute().params.organizationName
 const initData = async () => {
   const res = await getList(organizationName as string);
   total.value = res.total;
@@ -171,6 +176,7 @@ const initChartsData = async () => {
     width: 95%;
     padding: 0 1%;
     box-sizing: border-box;
+    scroll-behavior: smooth;
 
     .calendar-chart {
       margin-left: 15px;
@@ -207,20 +213,13 @@ ul {
   }
   .right {
     .calendar-container {
+      overflow-x: auto;
       .calendar-chart {
         width: 1000px;
       }
     }
     .pie-chart {
       flex-direction: column;
-      .pie-chart-type {
-        width: 100%;
-        aspect-ratio: 1;
-      }
-      .pie-chart-tag {
-        width: 100%;
-        aspect-ratio: 1;
-      }
     }
   }
 }

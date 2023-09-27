@@ -141,7 +141,7 @@ function toRegister() {
 
 <style lang="scss" scoped>
 .login-card {
-  width: 400px;
+  max-width: 400px;
   padding: 20px 20px 30px 20px;
   margin: auto;
   margin-top: 50px;

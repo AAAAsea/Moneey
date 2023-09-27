@@ -5,6 +5,7 @@ const Detail = () => import('@/views/Detail.vue');
 const Login = () => import('@/views/Login.vue');
 const Register = () => import('@/views/Register.vue');
 const Settings = () => import('@/views/Settings.vue');
+const History = () => import('@/views/History.vue');
 const Organization = () => import('@/components/Organization.vue');
 const OrganizationList = () => import('@/components/OrganizationList.vue');
 const OrganizationDetail = () => import('@/components/OrganizationDetail.vue');
@@ -19,6 +20,10 @@ export const router = createRouter({
     },
     {
       path: '/detail',
+      component: Detail,
+    },
+    {
+      path: '/detail/:organizationName',
       component: Detail,
     },
     {
@@ -60,6 +65,10 @@ export const router = createRouter({
           ],
         },
       ],
+    },
+    {
+      path: '/history',
+      component: History,
     },
   ],
 });

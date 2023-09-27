@@ -2,6 +2,7 @@
   <el-container class="settings">
     <el-aside class="side-bar">
       <RouterLink
+        replace
         v-for="item in menuList"
         class="side-bar-item"
         :to="item.path"

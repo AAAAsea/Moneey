@@ -34,14 +34,16 @@ const initUserInfo = async () => {
   Object.assign(user, userInfo);
   user.isLogin = true;
 };
-initUserInfo();
+initUserInfo().catch(()=>{
+  user.isLogin = false
+})
 
 const router = useRouter();
 const toDetail = () => {
   router.push('/detail');
 };
 const toOrgDetail = (name: string) => {
-  router.push(`/detail?organizationName=${name}`);
+  router.push(`/detail/${name}`);
 };
 </script>
 
