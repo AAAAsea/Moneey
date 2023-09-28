@@ -1,4 +1,5 @@
 import { ROLE } from '@/constants/org';
+import { IUserRecordData, Transaction } from '@/types/data';
 
 export function getMonthAndDate(timestamp) {
   let date = new Date(timestamp);
@@ -69,4 +70,50 @@ export const getTagTypeByRole = (role: ROLE) => {
     default:
       return 'info';
   }
+};
+
+export const balancePayment = (users: IUserRecordData): Transaction[] => {
+  let totalCost = users.reduce((acc, currentUser) => acc + currentUser.cost, 0);
+
+  let averageCost = totalCost / users.length;
+
+  let payers = users
+    .filter((user) => user.cost < averageCost)
+    .sort((a, b) => a.cost - b.cost);
+  let receivers = users
+    .filter((user) => user.cost > averageCost)
+    .sort((a, b) => b.cost - a.cost);
+
+  let transactions: Transaction[] = [];
+
+  while (payers.length > 0 && receivers.length > 0) {
+    let currentPayer = payers[0];
+    let currentReceiver = receivers[0];
+
+    let transactionCost = Math.min(
+      averageCost - currentPayer.cost,
+      currentReceiver.cost - averageCost
+    );
+
+    if (transactionCost >= 0.01) {
+      transactions.push({
+        from: currentPayer.name,
+        to: currentReceiver.name,
+        cost: transactionCost,
+      });
+    }
+
+    currentPayer.cost += transactionCost;
+    currentReceiver.cost -= transactionCost;
+
+    if (currentPayer.cost === averageCost) {
+      payers.shift();
+    }
+
+    if (currentReceiver.cost === averageCost) {
+      receivers.shift();
+    }
+  }
+
+  return transactions;
 };

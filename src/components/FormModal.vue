@@ -9,27 +9,25 @@
     <el-form
       :model="ruleForm"
       :rules="rules"
-      label-width="120px"
-      class="demo-ruleForm"
+      class="form"
       status-icon
       title="添加记录"
       ref="ruleFormRef"
+      label-width="60px"
     >
       <el-form-item label="日期" required>
-        <el-col :span="11">
-          <el-form-item prop="date">
-            <el-date-picker
-              v-model="ruleForm.date"
-              type="date"
-              label="选择日期"
-              placeholder="选择日期"
-              style="width: 100%"
-              value-format="YYYY-MM-DD"
-              :disabled-date="judgeDateDisabled"
-              :default-value="new Date()"
-            />
-          </el-form-item>
-        </el-col>
+        <el-form-item prop="date">
+          <el-date-picker
+            v-model="ruleForm.date"
+            type="date"
+            label="选择日期"
+            placeholder="选择日期"
+            style="width: 100%"
+            value-format="YYYY-MM-DD"
+            :disabled-date="judgeDateDisabled"
+            :default-value="new Date()"
+          />
+        </el-form-item>
       </el-form-item>
 
       <el-form-item label="金额" prop="cost">
@@ -95,13 +93,15 @@
       </el-form-item>
 
       <el-form-item :style="{ marginTop: '20px' }">
-        <el-button
-          type="primary"
-          @click="submitForm(ruleFormRef)"
-          :disabled="isSubmitDisabled"
-          >提交</el-button
-        >
-        <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+        <div class="btn-container">
+          <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+          <el-button
+            type="primary"
+            @click="submitForm(ruleFormRef)"
+            :disabled="isSubmitDisabled"
+            >提交</el-button
+          >
+        </div>
       </el-form-item>
     </el-form>
   </el-dialog>
@@ -216,7 +216,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
       isSubmitDisabled.value = true;
       addRecord({
         ...ruleForm,
-        organizationName: route.query.organizationName as string,
+        organizationName: route.params.organizationName as string,
       }).then(() => {
         ElMessage({
           message: '提交成功',
@@ -264,6 +264,15 @@ watchEffect(() => {
   flex-wrap: wrap;
   .el-input {
     width: 60px;
+  }
+}
+.form {
+  padding: 0 20px;
+  .btn-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
   }
 }
 </style>

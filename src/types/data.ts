@@ -63,3 +63,16 @@ export interface IPieChartDataItem {
   name: string;
   value: number;
 }
+
+export interface IUserRecordItem {
+  name: string;
+  cost: number;
+}
+
+export type IUserRecordData = IUserRecordItem[];
+
+export interface Transaction {
+  from: string;
+  to: string;
+  cost: number;
+}

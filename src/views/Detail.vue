@@ -1,5 +1,9 @@
 <template>
-  <div class="main">
+  <div
+    class="main"
+    v-loading="!inited"
+    element-loading-background="var(--color-background)"
+  >
     <div class="left no-scroll">
       <billing-list
         :title="organizationName || '个人账户'"
@@ -14,7 +18,7 @@
         <CalendarChart
           class="calendar-chart"
           :theme="echartTheme"
-          :data="calendarChartData"
+          :data="calendarChartData || []"
         ></CalendarChart>
       </div>
       <LineChart
@@ -34,6 +38,11 @@
           :total="total"
         ></PieChartByTag>
       </div>
+      <BalanceCost
+        class="balance-cost"
+        v-if="organizationName"
+        :transitionList="transitionList"
+      ></BalanceCost>
     </div>
     <form-modal
       :initData="initData"
@@ -42,11 +51,12 @@
       @submited="initData"
     />
     <el-button
+      class="add-button animate__animated animate__zoomIn"
+      v-show="inited"
       type="warning"
       :icon="Plus"
       size="large"
       circle
-      id="add-button"
       @click="showModal"
       :color="settingsStore.theme === 'light' ? '#d87c7c' : '#dd6b66'"
     />
@@ -54,42 +64,54 @@
 </template>
 
 <script lang="ts" setup>
+import { computed, ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import {
   getList,
   getListPerCategory,
   getListPerDay,
   getListPerYear,
   getListPerTag,
+  getListPerUser,
 } from '@/api/list.js';
-import { computed, ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-import { ILineChartData, IPieChartDataItem, IYearData } from '@/types/data.ts';
-import { Plus } from '@element-plus/icons-vue';
-import { useSettingsStore } from '@/store/settings';
 import CalendarChart from '@/components/CalendarChart.vue';
 import FormModal from '@/components/FormModal.vue';
 import LineChart from '@/components/LineChart.vue';
 import PieChartByCategory from '@/components/PieChartByCategory.vue';
 import PieChartByTag from '@/components/PieChartByTag.vue';
-import { formatDate } from '@/utils/tools';
+import BalanceCost from '@/components/BalanceCost.vue';
+import { formatDate, balancePayment } from '@/utils/tools';
+import {
+  ILineChartData,
+  IPieChartDataItem,
+  IYearData,
+  IUserRecordData,
+  Transaction,
+} from '@/types/data.ts';
+import { Plus } from '@element-plus/icons-vue';
+import { useSettingsStore } from '@/store/settings';
 
 const settingsStore = useSettingsStore();
 
 const calendarChartRef = ref<HTMLElement>();
-onMounted(()=>{
+onMounted(() => {
   const el = calendarChartRef.value;
-  if(el) el.scrollLeft = new Date().getMonth() / 12 * (el.scrollWidth - el.clientWidth); // scrollWidth = scrollLeft + clientWidth 
-})
+  if (el)
+    el.scrollLeft =
+      (new Date().getMonth() / 12) * (el.scrollWidth - el.clientWidth); // scrollWidth = scrollLeft + clientWidth
+  document.documentElement.scrollTop = 0;
+});
 
 const total = ref(0);
 const recordList = ref<IYearData[]>([]);
 const inited = ref(false);
 
-const organizationName = useRoute().params.organizationName
+const organizationName = useRoute().params.organizationName;
 const initData = async () => {
   const res = await getList(organizationName as string);
   total.value = res.total;
   recordList.value = res.data;
+  initBalanceData();
   initChartsData();
   inited.value = true;
 };
@@ -111,28 +133,54 @@ const calendarChartData = ref<[string, number][]>();
 const lineChartData = ref<ILineChartData>();
 const pieChartByCategoryData = ref<IPieChartDataItem[]>();
 const pieChartByTagData = ref<IPieChartDataItem[]>();
+const initChartsData = () => {
+  getListPerYear(new Date().getFullYear(), organizationName as string).then(
+    (data) => {
+      const year = new Date().getFullYear();
+      const date = new Date(year + '-01-01').getTime();
+      const end = new Date(year + 1 + '-01-01').getTime();
+      const dayTime = 3600 * 24 * 1000;
 
-const initChartsData = async () => {
-  calendarChartData.value = (
-    await getListPerYear(new Date().getFullYear(), organizationName as string)
-  ).map((item) => [formatDate(item[0]), item[1]]);
+      const newData: [string, number][] = [];
 
-  lineChartData.value = (
-    await getListPerDay(organizationName as string)
-  ).reduce(
-    (prev, cur) => {
-      prev.x.push(formatDate(cur.date));
-      prev.y.push(cur.cost);
-      return prev;
-    },
-    { x: [] as string[], y: [] as number[] }
+      for (let time = date; time < end; time += dayTime) {
+        const item = data.find((item) => new Date(item[0]).getTime() === time);
+        newData.push([formatDate(time), item ? item[1] : 0]);
+      }
+
+      calendarChartData.value = newData;
+    }
   );
 
-  pieChartByCategoryData.value = await getListPerCategory(
-    organizationName as string
-  );
+  getListPerDay(organizationName as string).then((data) => {
+    const startTime = new Date(data[0].date).getTime();
+    const endTime = new Date(data[data.length - 1].date).getTime();
+    const newData: ILineChartData = { x: [], y: [] };
 
-  pieChartByTagData.value = await getListPerTag(organizationName as string);
+    for (let i = startTime; i <= endTime; i += 24 * 60 * 60 * 1000) {
+      const date = new Date(i);
+      const item = data.find((item) => item.date === date.toISOString());
+      newData.x.push(formatDate(date));
+      newData.y.push(item ? item.cost : 0);
+    }
+
+    lineChartData.value = newData;
+  });
+
+  getListPerCategory(organizationName as string).then((data) => {
+    pieChartByCategoryData.value = data;
+  });
+
+  getListPerTag(organizationName as string).then((data) => {
+    pieChartByTagData.value = data;
+  });
+};
+
+const transitionList = ref<Transaction[]>();
+const userCostList = ref<IUserRecordData>();
+const initBalanceData = async () => {
+  userCostList.value = await getListPerUser(organizationName as string);
+  transitionList.value = balancePayment(userCostList.value);
 };
 </script>
 
@@ -146,8 +194,7 @@ const initChartsData = async () => {
 .left {
   border-radius: 10px;
   flex-basis: 300px;
-  min-width: 200px;
-  flex: 1;
+  min-width: 300px;
   background: var(--color-card);
   padding: 20px;
   box-sizing: border-box;
@@ -159,7 +206,7 @@ const initChartsData = async () => {
 }
 
 .right {
-  flex: 4;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 50px;
@@ -184,6 +231,12 @@ const initChartsData = async () => {
     }
   }
 
+  .balance-cost {
+    width: 95%;
+    margin: auto;
+    height: fit-content;
+  }
+
   .pie-chart {
     height: 400px;
     display: flex;
@@ -192,15 +245,18 @@ const initChartsData = async () => {
     width: 90%;
   }
 }
+
 ul {
   list-style: none;
   padding: 0;
 }
-#add-button {
+.add-button {
   position: fixed;
   right: 20px;
   bottom: 40px;
   transform: scale(1.2);
+  animation-duration: 0.3s;
+  box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
 }
 
 @media screen and (max-width: 600px) {

@@ -3,6 +3,7 @@ import {
   IBaseDayData,
   IPieChartDataItem,
   IRecordData,
+  IUserRecordData,
 } from '@/types/data';
 import request from '../utils/request';
 /**
@@ -80,6 +81,20 @@ export function getListPerTag(
 ): Promise<IPieChartDataItem[]> {
   return request({
     url: `/record/tag`,
+    method: 'get',
+    params: {
+      organizationName,
+    },
+  });
+}
+/**
+ * 根据user分组查询
+ */
+export function getListPerUser(
+  organizationName: string
+): Promise<IUserRecordData> {
+  return request({
+    url: `/record/person`,
     method: 'get',
     params: {
       organizationName,

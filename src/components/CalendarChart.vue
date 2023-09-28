@@ -7,7 +7,7 @@ import { ref, nextTick, watch } from 'vue';
 import echarts from '@/common/initEcharts';
 
 const props = defineProps<{
-  data: any;
+  data: [string, number][];
   theme: string;
 }>();
 
@@ -32,7 +32,7 @@ const initEchart = () => {
     gradientColor: ['#6d6868', '#dd6b66'],
     visualMap: {
       min: 1,
-      max: 1000,
+      max: props.data.reduce((pre, cur) => Math.max(pre, cur[1]), 0),
       show: false,
       type: 'piecewise',
       minOpen: true,

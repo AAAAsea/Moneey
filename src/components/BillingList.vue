@@ -218,7 +218,7 @@ const deleteItem = (id: number) => {
   });
 };
 
-const organizationName = useRoute().query.organizationName;
+const organizationName = useRoute().params.organizationName;
 </script>
 
 <style lang="scss" scoped>

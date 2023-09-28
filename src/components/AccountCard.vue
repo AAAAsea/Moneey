@@ -1,5 +1,8 @@
 <template>
-  <el-card shadow="hover" class="account-card">
+  <el-card
+    shadow="hover"
+    class="account-card animate__animated animate__zoomIn"
+  >
     <div class="header">
       <span class="title">{{ title }}</span>
       <el-tag :type="getTagTypeByRole(role)">{{
