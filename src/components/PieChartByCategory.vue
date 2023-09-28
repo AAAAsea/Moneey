@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, watch } from 'vue';
+import { ref, nextTick, watch, onUnmounted } from 'vue';
 import echarts from '@/common/initEcharts';
 import { IPieChartData } from '@/types/data';
 
@@ -84,6 +84,10 @@ const resize = () => {
   echartInstance.value && echartInstance.value.resize();
 };
 window.addEventListener('resize', resize);
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resize);
+});
 </script>
 <style lang="scss" scoped>
 .pie-chart {

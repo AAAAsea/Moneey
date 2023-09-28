@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, watch } from 'vue';
+import { ref, nextTick, watch, onUnmounted, shallowRef } from 'vue';
 import echarts from '@/common/initEcharts';
 import { ILineChartData } from '@/types/data';
 
@@ -13,7 +13,7 @@ const props = defineProps<{
 }>();
 
 const echartRef = ref();
-const echartInstance = ref();
+const echartInstance = shallowRef(); // 解决dataZoom无法拖拽的问题
 
 const initEchart = () => {
   if (!props.data) return;
@@ -79,6 +79,10 @@ const resize = () => {
   echartInstance.value && echartInstance.value.resize();
 };
 window.addEventListener('resize', resize);
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resize);
+});
 </script>
 <style lang="scss" scoped>
 .line-chart {

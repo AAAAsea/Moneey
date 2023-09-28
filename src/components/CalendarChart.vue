@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, watch } from 'vue';
+import { ref, nextTick, watch, onUnmounted, shallowRef } from 'vue';
 import echarts from '@/common/initEcharts';
 
 const props = defineProps<{
@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const echartRef = ref();
 const calendarContainerRef = ref();
-const echartInstance = ref();
+const echartInstance = shallowRef();
 
 const initEchart = () => {
   // 销毁
@@ -32,7 +32,7 @@ const initEchart = () => {
     gradientColor: ['#6d6868', '#dd6b66'],
     visualMap: {
       min: 1,
-      max: props.data.reduce((pre, cur) => Math.max(pre, cur[1]), 0),
+      max: props.data.reduce((pre, cur) => Math.max(pre, cur[1]), 5),
       show: false,
       type: 'piecewise',
       minOpen: true,
@@ -85,6 +85,10 @@ const resize = () => {
   echartInstance.value && echartInstance.value.resize();
 };
 window.addEventListener('resize', resize);
+
+onUnmounted(() => {
+  window.removeEventListener('resize', resize);
+});
 </script>
 
 <style lang="scss" scoped>

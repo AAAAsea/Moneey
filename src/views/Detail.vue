@@ -108,14 +108,15 @@ const inited = ref(false);
 
 const organizationName = useRoute().params.organizationName;
 const initData = async () => {
-  const res = await getList(organizationName as string);
-  total.value = res.total;
-  recordList.value = res.data;
+  getList(organizationName as string).then((res) => {
+    total.value = res.total;
+    recordList.value = res.data;
+    inited.value = true;
+  });
+
   initBalanceData();
   initChartsData();
-  inited.value = true;
 };
-initData();
 
 const modalVisible = ref(false);
 const showModal = () => {
@@ -153,6 +154,8 @@ const initChartsData = () => {
   );
 
   getListPerDay(organizationName as string).then((data) => {
+    if (!data.length) return;
+
     const startTime = new Date(data[0].date).getTime();
     const endTime = new Date(data[data.length - 1].date).getTime();
     const newData: ILineChartData = { x: [], y: [] };
@@ -182,6 +185,8 @@ const initBalanceData = async () => {
   userCostList.value = await getListPerUser(organizationName as string);
   transitionList.value = balancePayment(userCostList.value);
 };
+
+initData();
 </script>
 
 <style lang="scss" scoped>

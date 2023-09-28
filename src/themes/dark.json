@@ -353,7 +353,7 @@
     }
   },
   "visualMap": {
-    "color": ["#bf444c", "#d88273", "#f6efa6"]
+    "color": ["#bf444c", "#d88273", "#666666"]
   },
   "dataZoom": {
     "backgroundColor": "rgba(47,69,84,0)",

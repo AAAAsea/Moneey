@@ -6,7 +6,6 @@
 
   color-scheme: light dark;
 
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -35,6 +34,10 @@
   --el-color-primary: #dd6b66;
   --color-secondary-background-hover: #ffffff88;
 
+}
+
+html {
+  background: var(--color-background) !important;
 }
 
 body {
