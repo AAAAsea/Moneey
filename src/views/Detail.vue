@@ -1,65 +1,66 @@
 <template>
-  <div
-    class="main"
-    v-loading="!inited"
-    element-loading-background="var(--color-background)"
-  >
-    <div class="left no-scroll">
-      <billing-list
-        :title="organizationName || '个人账户'"
-        :recordList="recordList"
-        :total="total"
-        :inited="inited"
-        @deleted="initData"
+  <div v-loading="!inited" element-loading-background="var(--color-background)">
+    <div
+      class="main"
+      :class="{hidden: !inited}"
+    >
+      <div class="left no-scroll">
+        <billing-list
+          :title="organizationName || '个人账户'"
+          :recordList="recordList"
+          :total="total"
+          :inited="inited"
+          @deleted="initData"
+        />
+      </div>
+      <div class="right">
+        <div class="calendar-container no-scroll" ref="calendarChartRef">
+          <CalendarChart
+            class="calendar-chart"
+            :theme="echartTheme"
+            :data="calendarChartData || []"
+          ></CalendarChart>
+        </div>
+        <LineChart
+          class="line-chart"
+          :data="lineChartData"
+          :theme="echartTheme"
+        ></LineChart>
+        <div class="pie-chart">
+          <PieChartByCategory
+            :data="pieChartByCategoryData"
+            :theme="echartTheme"
+            :total="total"
+          ></PieChartByCategory>
+          <PieChartByTag
+            :data="pieChartByTagData"
+            :theme="echartTheme"
+            :total="total"
+          ></PieChartByTag>
+        </div>
+        <BalanceCost
+          class="balance-cost"
+          v-if="organizationName"
+          :transitionList="transitionList"
+        ></BalanceCost>
+      </div>
+      <form-modal
+        :initData="initData"
+        :visible.sync="modalVisible"
+        @close="onModalClose"
+        @submited="initData"
+      />
+      <el-button
+        class="add-button animate__animated animate__zoomIn"
+        v-show="inited"
+        type="warning"
+        :icon="Plus"
+        size="large"
+        circle
+        @click="showModal"
+        :color="settingsStore.theme === 'light' ? '#d87c7c' : '#dd6b66'"
       />
     </div>
-    <div class="right">
-      <div class="calendar-container no-scroll" ref="calendarChartRef">
-        <CalendarChart
-          class="calendar-chart"
-          :theme="echartTheme"
-          :data="calendarChartData || []"
-        ></CalendarChart>
-      </div>
-      <LineChart
-        class="line-chart"
-        :data="lineChartData"
-        :theme="echartTheme"
-      ></LineChart>
-      <div class="pie-chart">
-        <PieChartByCategory
-          :data="pieChartByCategoryData"
-          :theme="echartTheme"
-          :total="total"
-        ></PieChartByCategory>
-        <PieChartByTag
-          :data="pieChartByTagData"
-          :theme="echartTheme"
-          :total="total"
-        ></PieChartByTag>
-      </div>
-      <BalanceCost
-        class="balance-cost"
-        v-if="organizationName"
-        :transitionList="transitionList"
-      ></BalanceCost>
-    </div>
-    <form-modal
-      :initData="initData"
-      :visible.sync="modalVisible"
-      @close="onModalClose"
-      @submited="initData"
-    />
-    <el-button
-      class="add-button animate__animated animate__zoomIn"
-      v-show="inited"
-      type="warning"
-      :icon="Plus"
-      size="large"
-      circle
-      @click="showModal"
-      :color="settingsStore.theme === 'light' ? '#d87c7c' : '#dd6b66'"
-    />
   </div>
 </template>
 
@@ -194,6 +195,11 @@ initData();
   padding: 10px;
   display: flex;
   padding-bottom: 30px;
+  transition: opacity .3s;
+
+  &.hidden {
+    opacity: 0;
+  }
 }
 
 .left {
