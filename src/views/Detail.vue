@@ -225,6 +225,7 @@ initData();
   transition: 0.3s;
   overflow-x: auto;
 
+
   .line-chart {
     width: 100%;
     height: 300px;

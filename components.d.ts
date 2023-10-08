@@ -51,6 +51,7 @@ declare module '@vue/runtime-core' {
     ProjectHistory: typeof import('./src/components/ProjectHistory.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Shortcut: typeof import('./src/components/Shortcut.vue')['default']
     TopNav: typeof import('./src/components/TopNav.vue')['default']
   }
   export interface ComponentCustomProperties {

@@ -92,9 +92,16 @@
         </div>
       </el-form-item>
 
+      <div class="shortcut-container">
+        <shortcut @select="setForm"></shortcut>
+      </div>
+
       <el-form-item :style="{ marginTop: '20px' }">
         <div class="btn-container">
           <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+          <el-button @click="saveForm(ruleFormRef)" type="warning"
+            >保存</el-button
+          >
           <el-button
             type="primary"
             @click="submitForm(ruleFormRef)"
@@ -115,6 +122,9 @@ import { formatDate } from '@/utils/tools.ts';
 import { useDataStore } from '@/store/data';
 import { useModalStore } from '@/store/modal';
 import { ElMessage, FormInstance, ElInput } from 'element-plus';
+import { useShortcutStore } from '@/store/shortcut';
+import Shortcut from './Shortcut.vue';
+import { IShortcutItem } from '@/types/shortcut';
 
 const props = defineProps({
   initData: Function,
@@ -247,6 +257,37 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields();
 };
 
+const shortcutStore = useShortcutStore();
+const saveForm = async (formEl: FormInstance | undefined) => {
+  if (!formEl) return;
+  await formEl.validate((valid: boolean) => {
+    if (valid) {
+      console.log(shortcutStore);
+
+      shortcutStore.addShortcut({
+        ...ruleForm,
+        organizationName: route.params.organizationName as string,
+      });
+      ElMessage({
+        message: '保存成功',
+        type: 'success',
+      });
+    } else {
+      ElMessage({
+        message: '请输入正确的格式',
+        type: 'error',
+      });
+    }
+  });
+};
+const setForm = (item: IShortcutItem) => {
+  if (!item) return;
+  ruleForm.categoryName = item.categoryName;
+  ruleForm.content = item.content;
+  ruleForm.cost = item.cost;
+  ruleForm.tags = [...item.tags];
+};
+
 const onClose = () => {
   emit('close');
 };
@@ -273,6 +314,13 @@ watchEffect(() => {
     justify-content: flex-end;
     gap: 10px;
     width: 100%;
+  }
+
+  .shortcut-container {
+    padding: 0 20px;
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
   }
 }
 </style>
