@@ -318,9 +318,6 @@ watchEffect(() => {
 
   .shortcut-container {
     padding: 0 20px;
-    display: flex;
-    justify-content: flex-end;
-    flex-wrap: wrap;
   }
 }
 </style>

@@ -12,6 +12,9 @@ export const useShortcutStore = defineStore('shortcut', {
     clear() {
       this.shortcutList.splice(0);
     },
+    delete(index: number) {
+      this.shortcutList.splice(index, 1);
+    },
   },
   persist: true,
 });
