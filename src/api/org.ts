@@ -72,3 +72,17 @@ export function addMember(userId: number, organizationName: string) {
     },
   });
 }
+
+/**
+ * 结账
+ * @param name
+ */
+export function orgBilling(organizationName: string) {
+  return request({
+    url: `/organization/billing/${organizationName}`,
+    method: 'post',
+    data: {
+      organizationName,
+    },
+  });
+}

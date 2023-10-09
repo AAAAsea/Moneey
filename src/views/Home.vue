@@ -10,6 +10,7 @@
       title="我的账户"
       @click="toDetail"
       :cost="user.cost"
+      :update-time="user.updateTime"
     ></AccountCard>
     <h2>我的组织</h2>
     <div class="organizations">

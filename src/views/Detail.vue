@@ -1,9 +1,6 @@
 <template>
   <div v-loading="!inited" element-loading-background="var(--color-background)">
-    <div
-      class="main"
-      :class="{hidden: !inited}"
-    >
+    <div class="main" :class="{ hidden: !inited }">
       <div class="left no-scroll">
         <billing-list
           :title="organizationName || '个人账户'"
@@ -42,6 +39,7 @@
           class="balance-cost"
           v-if="organizationName"
           :transitionList="transitionList"
+          @refresh="initData"
         ></BalanceCost>
       </div>
       <form-modal
@@ -195,7 +193,7 @@ initData();
   padding: 10px;
   display: flex;
   padding-bottom: 30px;
-  transition: opacity .3s;
+  transition: opacity 0.3s;
 
   &.hidden {
     opacity: 0;
@@ -224,7 +222,6 @@ initData();
   box-sizing: border-box;
   transition: 0.3s;
   overflow-x: auto;
-
 
   .line-chart {
     width: 100%;

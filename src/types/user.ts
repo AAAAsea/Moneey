@@ -22,9 +22,12 @@ export interface IUserState extends IBaseUserInfo {
   token: string;
   organizations: Organizations;
   cost: number;
+  updateTime: string;
 }
 
 export interface IUserProfile extends IBaseUserInfo {
+  cost: number;
+  updateTime: string;
   organizations: Organizations;
 }
 

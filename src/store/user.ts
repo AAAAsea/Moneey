@@ -10,6 +10,7 @@ export const useUserStore = defineStore('user', {
     userId: -1,
     organizations: [],
     cost: 0,
+    updateTime: '',
   }),
   persist: true,
 });
