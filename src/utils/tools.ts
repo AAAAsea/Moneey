@@ -117,3 +117,45 @@ export const balancePayment = (users: IUserRecordData): Transaction[] => {
 
   return transactions;
 };
+
+export function friendlyTimeDisplay(input: string | Date | number): string {
+  let date: Date;
+
+  if (input instanceof Date) {
+    date = input;
+  } else if (typeof input === 'number') {
+    date = new Date(input);
+  } else {
+    date = new Date(input);
+  }
+
+  const now = Date.now();
+  const diff = (now - date.getTime()) / 1000; // 差距的秒数
+
+  console.log(diff);
+
+  if (diff < 60) {
+    return '刚刚';
+  }
+
+  const diffMinutes = diff / 60;
+  if (diffMinutes < 60) {
+    return `${Math.floor(diffMinutes)}分钟前`;
+  }
+
+  const diffHours = diffMinutes / 60;
+  if (diffHours < 24) {
+    return `${Math.floor(diffHours)}小时前`;
+  }
+
+  const diffDays = diffHours / 24;
+  if (diffDays < 365) {
+    return (
+      date.toISOString().substring(5, 10) +
+      ' ' +
+      ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][date.getDay()]
+    );
+  }
+
+  return formatDate(date, 'yyyy-MM-DD HH:mm:');
+}

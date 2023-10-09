@@ -12,6 +12,7 @@ export interface IOrganization {
   createTime: string;
   cost: number;
   role: ROLE;
+  updateTime: string;
 }
 
 export type Organizations = IOrganization[];

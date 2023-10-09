@@ -10,14 +10,18 @@
       }}</el-tag>
     </div>
     <div class="cost">￥ {{ cost }}</div>
-    <div class="date" v-if="date">{{ formatDate(date) }}</div>
+    <div class="date" v-if="updateTime || createTime">
+      {{
+        friendlyTimeDisplay(updateTime ? updateTime : createTime as string)
+      }} {{ updateTime ? '更新' : '创建' }}
+    </div>
   </el-card>
 </template>
 
 <script lang="ts" setup>
 import { ROLE } from '@/constants/org';
 import {
-  formatDate,
+  friendlyTimeDisplay,
   getRoleLabelByBalue,
   getTagTypeByRole,
 } from '@/utils/tools';
@@ -26,7 +30,8 @@ defineProps<{
   title: String;
   cost: Number;
   role: ROLE;
-  date?: string;
+  createTime?: string;
+  updateTime?: string;
 }>();
 </script>
 
@@ -37,6 +42,7 @@ defineProps<{
   display: flex;
   flex-direction: column;
   width: 300px;
+
   .header {
     display: flex;
     gap: 10px;
@@ -57,6 +63,8 @@ defineProps<{
 
   .date {
     text-align: right;
+    opacity: 0.8;
+    font-size: 14px;
   }
 }
 </style>

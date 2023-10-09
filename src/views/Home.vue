@@ -17,7 +17,8 @@
         :role="organization.role"
         :title="organization.name"
         :cost="organization.cost"
-        :date="organization.createTime"
+        :createTime="organization.createTime"
+        :updateTime="organization.updateTime"
         @click="toOrgDetail(organization.name)"
         v-for="organization in user.organizations"
       ></AccountCard>
