@@ -1,16 +1,9 @@
 <template>
   <div class="shortcut-wrapper" v-show="shortcutList.length > 0">
-    <el-button
-      @click="edit"
-      type="primary"
-      :icon="editable ? Select : Edit"
-      circle
-    >
-    </el-button>
     <div class="btn-wrapper">
       <div class="shortcut-btn" v-for="(item, index) in shortcutList">
         <el-button type="text" @click="onShortcutClick(item)">
-          {{ item.content }}
+          {{ item.name }}
         </el-button>
 
         <el-icon
@@ -22,6 +15,9 @@
         /></el-icon>
       </div>
     </div>
+    <el-button @click="edit" type="text">
+      {{ editable ? '完成' : '编辑' }}
+    </el-button>
   </div>
 </template>
 
@@ -29,7 +25,7 @@
 import { computed, ref } from 'vue';
 import { useShortcutStore } from '@/store/shortcut';
 import { IShortcutItem } from '@/types/shortcut';
-import { CloseBold, Edit, Select } from '@element-plus/icons-vue';
+import { CloseBold } from '@element-plus/icons-vue';
 
 const emit = defineEmits(['select']);
 
@@ -59,7 +55,6 @@ const deleteItem = (index: number) => {
     display: flex;
     column-gap: 10px;
     margin: 0 10px;
-    justify-content: flex-end;
     flex-wrap: wrap;
     align-items: center;
     .shortcut-btn {

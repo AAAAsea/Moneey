@@ -5,6 +5,7 @@ export interface IShortcutItem {
   content: string;
   tags: string[];
   organizationName: string;
+  name: string;
 }
 
 export interface IShortcutState {

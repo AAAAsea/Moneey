@@ -15,8 +15,7 @@
       ref="ruleFormRef"
       label-width="60px"
     >
-      <el-form-item label="日期" required>
-        <el-form-item prop="date">
+      <el-form-item label="日期" required prop="date">
           <el-date-picker
             v-model="ruleForm.date"
             type="date"
@@ -27,7 +26,6 @@
             :disabled-date="judgeDateDisabled"
             :default-value="new Date()"
           />
-        </el-form-item>
       </el-form-item>
 
       <el-form-item label="金额" prop="cost">
@@ -93,14 +91,16 @@
       </el-form-item>
 
       <div class="shortcut-container">
-        <shortcut @select="setForm"></shortcut>
+        <shortcut @select="setForm" @add="innerVisible = true"></shortcut>
       </div>
 
       <el-form-item :style="{ marginTop: '20px' }">
         <div class="btn-container">
-          <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-          <el-button @click="saveForm(ruleFormRef)" type="warning"
-            >保存</el-button
+          <el-button type="text" @click="innerVisible = true"
+            >添加快捷方式</el-button
+          >
+          <el-button @click="resetForm(ruleFormRef)" type="text"
+            >重置</el-button
           >
           <el-button
             type="primary"
@@ -111,6 +111,96 @@
         </div>
       </el-form-item>
     </el-form>
+
+    <el-dialog
+      v-model="innerVisible"
+      :width="modalStore.width"
+      title="添加快捷方式"
+      append-to-body
+    >
+      <el-form
+        label-width="60px"
+        ref="addShortcutFormRef"
+        :rules="shortcutFormRules"
+        :model="shortcutForm"
+      >
+        <el-form-item label="名称" prop="shortcutName">
+          <el-input
+            v-model="shortcutForm.shortcutName"
+            placeholder="给你的快捷方式起个名字吧"
+          />
+        </el-form-item>
+        <el-form-item label="金额" prop="cost">
+          <el-input-number v-model="ruleForm.cost" />
+        </el-form-item>
+
+        <el-form-item label="分类" prop="categoryName">
+          <el-select
+            v-model="ruleForm.categoryName"
+            filterable
+            allow-create
+            default-first-option
+            :reserve-keyword="false"
+            placeholder="选择花费分类"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="用途" prop="content">
+          <el-input
+            v-model="ruleForm.content"
+            type="textarea"
+            placeholder="拿钱干嘛了！"
+          />
+        </el-form-item>
+
+        <el-form-item label="标签" prop="tags">
+          <div class="tags-container">
+            <el-tag
+              v-for="tag in ruleForm.tags"
+              :key="tag"
+              class="mx-1"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(tag)"
+            >
+              {{ tag }}
+            </el-tag>
+            <el-input
+              v-if="tagInputVisible"
+              ref="tagInputRef"
+              v-model="tagInputValue"
+              class="ml-1 w-20"
+              size="small"
+              @keyup.enter="handleInputConfirm"
+              @blur="handleInputConfirm"
+            />
+            <el-button
+              v-else
+              class="button-new-tag ml-1"
+              size="small"
+              @click="showInput"
+            >
+              + 添加
+            </el-button>
+          </div>
+        </el-form-item>
+        <el-form-item class="btn-container">
+          <div style="display: flex; justify-content: flex-end; width: 100%">
+            <el-button @click="innerVisible = false">取消</el-button>
+            <el-button type="primary" @click="saveForm(addShortcutFormRef)"
+              >保存</el-button
+            >
+          </div>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </el-dialog>
 </template>
 
@@ -219,7 +309,6 @@ const handleInputConfirm = () => {
 
 const submitForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  console.log('提交');
 
   await formEl.validate((valid: boolean) => {
     if (valid) {
@@ -257,26 +346,45 @@ const resetForm = (formEl: FormInstance | undefined) => {
   formEl.resetFields();
 };
 
+//  shortcut
 const shortcutStore = useShortcutStore();
+const innerVisible = ref(false);
+const addShortcutFormRef = ref();
+const shortcutForm = reactive({
+  shortcutName: '',
+})
+const shortcutFormRules = {
+  shortcutName: [
+    {
+      required: true,
+      message: '请输入快捷方式名称',
+      trigger: 'change',
+    },
+  ],
+};
 const saveForm = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
+
   await formEl.validate((valid: boolean) => {
     if (valid) {
-      console.log(shortcutStore);
 
+      if (shortcutForm.shortcutName.trim() === '') {
+        ElMessage({
+          message: '快捷方式叫什么？',
+          type: 'error',
+        });
+        return;
+      }
       shortcutStore.addShortcut({
         ...ruleForm,
         organizationName: route.params.organizationName as string,
+        name: shortcutForm.shortcutName,
       });
       ElMessage({
         message: '保存成功',
         type: 'success',
       });
-    } else {
-      ElMessage({
-        message: '请输入正确的格式',
-        type: 'error',
-      });
+      innerVisible.value = false;
     }
   });
 };
